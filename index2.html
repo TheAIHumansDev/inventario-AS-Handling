@@ -274,6 +274,42 @@
   .toast{background:var(--bg-card);border:1px solid var(--border);border-left:3px solid var(--amber);padding:11px 14px;border-radius:8px;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.5);animation:slideUp .2s}
   .toast.ok{border-left-color:var(--green)}.toast.err{border-left-color:var(--red)}
 
+  /* AUDITOR IA */
+  .ai-card{border:1px solid rgba(139,92,246,.4)!important;background:linear-gradient(180deg,rgba(139,92,246,.09),var(--bg-card) 60%)!important}
+  .ai-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .ai-dot{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#8b5cf6,#f59e0b);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+  .risk{font-family:var(--mono);font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:.08em;margin-left:auto;white-space:nowrap}
+  .risk.bajo{background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,.3)}
+  .risk.medio{background:rgba(245,158,11,.12);color:var(--amber);border:1px solid rgba(245,158,11,.35)}
+  .risk.alto{background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,.4)}
+  .ai-sum{font-size:13px;line-height:1.55;margin-bottom:12px;padding:10px 12px;border-radius:8px;background:rgba(139,92,246,.1);color:#ddd6fe}
+  .finding{display:flex;gap:8px;font-size:12px;padding:8px 10px;border-radius:7px;margin-bottom:6px;line-height:1.45}
+  .finding.alto{background:var(--red-dim);border:1px solid rgba(239,68,68,.3);color:#fca5a5}
+  .finding.medio{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);color:#fcd34d}
+  .finding.info{background:var(--blue-dim);border:1px solid rgba(59,130,246,.25);color:#bfdbfe}
+  .q{background:var(--bg-base);border:1px solid var(--border);border-radius:10px;padding:12px;margin-top:8px;transition:.15s}
+  .q.req{border-color:rgba(239,68,68,.45)}
+  .q.done{border-color:rgba(34,197,94,.45)}
+  .q-t{font-size:13px;font-weight:600;margin-bottom:8px;display:flex;gap:6px;align-items:flex-start}
+  .q-t small{font-family:var(--mono);font-size:9px;color:var(--red);border:1px solid rgba(239,68,68,.4);border-radius:10px;padding:1px 6px;margin-left:auto;white-space:nowrap}
+  .q-opts{display:flex;flex-wrap:wrap;gap:6px}
+  .q-chip{background:var(--bg-card);border:1px solid var(--border);color:var(--text-secondary);padding:6px 11px;border-radius:20px;font-size:12px;cursor:pointer;transition:.12s}
+  .q-chip:hover{border-color:var(--amber-dim);color:var(--text-primary)}
+  .q-chip.sel{background:var(--amber);border-color:var(--amber);color:#000;font-weight:600}
+  .q-chip.cancel.sel{background:var(--red);border-color:var(--red);color:#fff}
+  .q input{margin-top:8px;font-size:12px!important;padding:7px 9px!important}
+  .ai-src{font-size:10px;color:var(--text-muted);font-family:var(--mono);margin-top:10px;display:flex;gap:6px;align-items:center}
+  .mini-spin{width:12px;height:12px;border:2px solid var(--border);border-top-color:#8b5cf6;border-radius:50%;animation:spin .8s linear infinite;display:inline-block}
+  .sim-box{margin-top:14px;border:1px dashed rgba(139,92,246,.5);border-radius:10px;padding:12px;background:rgba(139,92,246,.06)}
+  .sku-box{background:var(--bg-base);border:1px dashed var(--border);border-radius:7px;padding:8px 11px;font-family:var(--mono);font-size:13px;min-height:40px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .aud-item{display:flex;gap:12px;align-items:flex-start;background:var(--bg-card);border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:10px;padding:12px 14px;margin-bottom:8px}
+  .aud-item.alto{border-left-color:var(--red)}.aud-item.medio{border-left-color:var(--amber)}
+  .aud-item .ai-t{font-size:13px;font-weight:600}
+  .aud-item .ai-d{font-size:12px;color:var(--text-secondary);margin-top:3px}
+  .accion{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid rgba(139,92,246,.2);font-size:13px}
+  .accion:last-child{border-bottom:none}
+  .accion b{font-family:var(--mono);color:#c4b5fd;min-width:22px}
+
   #printArea{display:none}
   @media print{
     body{background:#fff;padding:0}
@@ -310,6 +346,7 @@
     <button class="tab" data-view="ingreso">📥 Ingreso</button>
     <button class="tab" data-view="historial">🧾 Kardex</button>
     <button class="tab" data-view="prov">🏢 Proveedores</button>
+    <button class="tab" data-view="auditor">🤖 Auditor</button>
   </nav>
   <div class="topbar-right">
     <div class="user-chip" id="userChip" title="Usuario que registra">—</div>
@@ -321,7 +358,8 @@
   <button class="tab active" data-view="stock"><span>📦</span>Stock</button>
   <button class="tab" data-view="ingreso"><span>📥</span>Ingreso</button>
   <button class="tab" data-view="historial"><span>🧾</span>Kardex</button>
-  <button class="tab" data-view="prov"><span>🏢</span>Proveedores</button>
+  <button class="tab" data-view="prov"><span>🏢</span>Proveed.</button>
+  <button class="tab" data-view="auditor"><span>🤖</span>Auditor</button>
 </nav>
 
 <main class="wrap">
@@ -394,9 +432,9 @@
                 <div class="hint">Código del producto en el catálogo o factura del proveedor.</div>
               </div>
               <div class="field">
-                <label>#️⃣ SKU interno AS</label>
-                <input type="text" id="codeSku" class="input-mono code-q" placeholder="Ej: AS-EPP-00001" autocomplete="off" style="text-transform:uppercase">
-                <div class="hint">Solo para buscar productos existentes. Los SKU nuevos se asignan automáticamente.</div>
+                <label>#️⃣ SKU interno AS <span class="opt">(automático)</span></label>
+                <div class="sku-box" id="skuBox1"></div>
+                <div class="hint">No se digita: se genera al registrar, o se sugiere el SKU de un producto igual o similar. Si escaneas una etiqueta SKU en “Código de barras”, se detecta sola.</div>
               </div>
             </div>
             <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px">
@@ -499,8 +537,14 @@
             <div class="card-title">✅ Revisión final</div>
             <div id="reviewBody"></div>
           </div>
+          <div class="card ai-card">
+            <div class="ai-head"><div class="ai-dot">🤖</div>
+              <div><div style="font-weight:700;font-size:14px">Auditor IA</div><div class="hint" style="margin:0">Revisa precio, proveedor, documento e historial antes de aprobar</div></div>
+              <span class="risk hidden" id="aiRisk"></span></div>
+            <div id="aiBody"></div>
+          </div>
           <div class="card">
-            <div class="card-title">🛡 Controles de auditoría</div>
+            <div class="card-title">🧾 Completitud del registro</div>
             <div class="audit-list" id="auditList"></div>
           </div>
           <div class="card">
@@ -562,6 +606,21 @@
     </div>
     <div class="toolbar"><div class="search"><input type="text" id="provSearch" placeholder="Buscar proveedor…"></div></div>
     <div class="prov-grid" id="provGrid"></div>
+  </section>
+
+  <!-- ═════════════ AUDITOR ═════════════ -->
+  <section class="view" id="v-auditor">
+    <div class="page-head">
+      <div><div class="page-title">🤖 Auditor de inventario</div><div class="page-sub" id="audSub">Reglas de control + IA sobre proveedores, precios, documentos y stock</div></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-sm" id="btnAud" onclick="runAuditoria(false)">▶ Ejecutar auditoría</button>
+        <button class="btn btn-ghost-amber btn-sm" id="btnAudIA" onclick="runAuditoria(true)">🤖 Análisis con IA</button>
+      </div>
+    </div>
+    <div id="audIA"></div>
+    <div class="kpis" id="audKpis"></div>
+    <div class="chips" id="audChips"></div>
+    <div id="audList"><div class="empty"><div>🤖</div>Ejecuta la auditoría para ver hallazgos.</div></div>
   </section>
 </main>
 
@@ -629,11 +688,26 @@ const ALERT_TXT = {
   SIN_EVIDENCIA:['warn','Sin foto del documento ni del inventario recibido'],
   SIN_FOTO_PRODUCTO:['warn','El producto no tiene foto de referencia'],
   CODIGO_COMPARTIDO:['warn','Código de barras compartido con otro SKU (variante)'],
-  CAMBIO_MONEDA:['warn','Cambio de moneda: costo promedio reiniciado']
+  CAMBIO_MONEDA:['warn','Cambio de moneda: costo promedio reiniciado'],
+  PRECIO_ALTO:['warn','Costo sobre el promedio histórico'],
+  PRECIO_BAJO:['warn','Costo muy por debajo del histórico'],
+  PRECIO_VS_PROVEEDOR:['warn','Otro proveedor lo vendió más barato'],
+  PROVEEDOR_NUEVO_SKU:['info','Primera compra de este producto a ese proveedor'],
+  PROVEEDOR_SIN_ID:['warn','Proveedor sin cédula jurídica'],
+  PROVEEDOR_RECIENTE_MONTO_ALTO:['bad','Proveedor recién creado con monto alto'],
+  DOC_DUPLICADO:['bad','Documento ya registrado para este producto'],
+  CANTIDAD_ATIPICA:['warn','Cantidad fuera de lo habitual'],
+  SOBRESTOCK:['info','Stock muy por encima del mínimo'],
+  REGISTRO_REPETIDO:['bad','Entrada repetida en pocos minutos'],
+  PRODUCTO_VENCIDO:['bad','Producto vencido'],
+  VENCE_PRONTO:['warn','Vencimiento cercano'],
+  MONTO_ALTO_SIN_RESPALDO:['bad','Monto alto sin foto del documento'],
+  POSIBLE_DUPLICADO:['warn','Producto muy parecido a uno existente']
 };
 
 // ═══════════════════════════════ STATE ═══════════════════════════════
-const S = { user:'', tipos:{}, monedas:['CRC','USD'], maxEvid:6, categorias:[], ubicaciones:[], proveedores:[], productos:[], movs:null, filtroCat:'', sheetUrl:'' };
+const S = { user:'', tipos:{}, monedas:['CRC','USD'], maxEvid:6, categorias:[], ubicaciones:[], proveedores:[], productos:[], movs:null, filtroCat:'', sheetUrl:'',
+  skuPrefix:'AS', skuDigits:5, ia:{ disponible:false, proveedor:'', modelo:'' } };
 const ING = {};
 let LAST = {};
 let provModalForIngreso = false;
@@ -693,7 +767,8 @@ async function reload() {
   try {
     const d = await api('api_bootstrap');
     Object.assign(S, { user:d.user, tipos:d.tipos, monedas:d.monedas, maxEvid:d.maxEvidencias, categorias:d.categorias,
-      ubicaciones:d.ubicaciones, proveedores:d.proveedores, productos:d.productos, sheetUrl:d.sheetUrl });
+      ubicaciones:d.ubicaciones, proveedores:d.proveedores, productos:d.productos, sheetUrl:d.sheetUrl,
+      skuPrefix:d.skuPrefix || 'AS', skuDigits:d.skuDigits || 5, ia:d.ia || S.ia });
     $('#userChip').textContent = S.user || 'usuario no identificado';
     renderStock(); renderProveedores(); fillSelects();
     if (!ING.step) resetIng(); else renderSide();
@@ -704,6 +779,7 @@ function showView(v) {
   $$('.view').forEach(x => x.classList.toggle('active', x.id === 'v-' + v));
   $$('.tab[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === v));
   if (v === 'historial') loadMovs(!S.movs);
+  if (v === 'auditor' && !AUD) runAuditoria(false);
   window.scrollTo({top:0});
 }
 
@@ -807,15 +883,46 @@ async function openDrawer(sku) {
   } catch(e) { $('#drKardex').innerHTML = `<div class="hint" style="color:var(--red)">${esc(e.message)}</div>`; }
 }
 const tipoLabel = t => { const k = String(t).replace(/^ENTRADA_/,''); return (String(t).startsWith('ENTRADA_') ? 'Entrada · ' : '') + (S.tipos[k] || t); };
-const alertBadges = a => String(a||'').split(',').map(s=>s.trim()).filter(Boolean).map(k => `<span class="badge ${ (ALERT_TXT[k]||['warn'])[0]==='bad'?'badge-bad':'badge-warn'}" title="${esc((ALERT_TXT[k]||[,k])[1])}">${esc(k.replace(/_/g,' '))}</span>`).join('');
+const alertBadges = a => String(a||'').split(',').map(s=>s.trim()).filter(Boolean).map(k => { const t = (ALERT_TXT[k]||['warn'])[0];
+  return `<span class="badge ${t==='bad'?'badge-bad':t==='info'?'badge-blue':'badge-warn'}" title="${esc((ALERT_TXT[k]||[,k])[1])}">${esc(k.replace(/_/g,' '))}</span>`; }).join('');
+const riskBadge = r => r && r !== 'bajo' ? `<span class="badge ${r==='alto'?'badge-bad':'badge-warn'}">RIESGO ${esc(String(r).toUpperCase())}</span>` : '';
+
+// ─── Similitud de productos (misma lógica que el servidor) ───
+const STOP = new Set(['de','del','la','el','los','las','para','con','y','en','a','t','talla','color','modelo','unidad','und']);
+const toks = s => norm(s).replace(/[^a-z0-9]+/g,' ').split(' ').filter(t => t && !STOP.has(t)).map(t => t.length > 4 ? t.replace(/(es|s)$/,'') : t);
+function jac(a, b) { if (!a.length && !b.length) return 1; const A = new Set(a), B = new Set(b); let i = 0; A.forEach(x => { if (B.has(x)) i++; }); return i / (A.size + B.size - i || 1); }
+function simScore(n, p) {
+  let s = 0.7*jac(toks(n.nombre), toks(p.Nombre)) + 0.3*jac(toks(n.variante), toks(p.Variante));
+  if (n.categoria) s += n.categoria === p.Categoria ? 0.1 : -0.15;
+  const bc = String(n.codigoBarras||''); if (bc.length >= 12 && String(p.Codigo_Barras).slice(0,7) === bc.slice(0,7)) s += 0.1;
+  if (n.idProveedor && String(p.ID_Proveedor).trim().toUpperCase() === n.idProveedor.trim().toUpperCase()) s = Math.max(s, 0.9);
+  return Math.max(0, Math.min(1, s));
+}
+function similares(n) {
+  if (!n || !String(n.nombre||'').trim()) return [];
+  return S.productos.map(p => ({ p, score:simScore(n, p) })).filter(x => x.score >= 0.5).sort((a,b) => b.score - a.score).slice(0, 3);
+}
+function skuPreview(catName) {
+  const c = S.categorias.find(x => x.nombre === catName); if (!c) return '';
+  const re = new RegExp(`^${S.skuPrefix}-${c.prefijo}-(\\d+)$`);
+  const max = S.productos.reduce((m,p) => { const k = String(p.SKU).match(re); return k ? Math.max(m, +k[1]) : m; }, 0);
+  return `${S.skuPrefix}-${c.prefijo}-${String(max+1).padStart(S.skuDigits,'0')}`;
+}
+function renderSkuBox(sugerido) {
+  const el = $('#skuBox1'); if (!el) return;
+  el.innerHTML = ING.producto ? `<span class="tag green">${esc(ING.producto.SKU)}</span><span style="font-size:11px;color:var(--text-muted)">producto existente</span>`
+    : sugerido ? `<span class="tag amber">${esc(sugerido)}</span><span style="font-size:11px;color:var(--text-muted)">sugerido por coincidencia</span>`
+    : `<span style="color:var(--text-muted);font-size:12px">🤖 Automático</span>`;
+}
 
 // ═══════════════════════════════ INGRESO WIZARD ═══════════════════════════════
 function resetIng() {
   Object.assign(ING, { step:1, modo:null, producto:null, codigo:'', formato:'', permitirDuplicado:false,
-    fotos:{ producto:null, barcode:null, documento:null, evidencia:[] }, reqId: uid() });
-  ['codeBarras','codeIdProv','codeSku','nameSearch','eDocNro','eQtyDoc','eCosto','eLote','eVence','eSeries','eObs'].forEach(id => { const el = $('#'+id); if (el) el.value = ''; });
+    fotos:{ producto:null, barcode:null, documento:null, evidencia:[] }, reqId: uid(),
+    distintos:new Set(), audit:null, respuestas:{}, np:null });
+  ['codeBarras','codeIdProv','nameSearch','eDocNro','eQtyDoc','eCosto','eLote','eVence','eSeries','eObs'].forEach(id => { const el = $('#'+id); if (el) el.value = ''; });
   $('#eQty').value = 1; $('#eDeclara').checked = false;
-  $('#bcDetected').innerHTML = ''; $('#matchArea').innerHTML = '';
+  $('#bcDetected').innerHTML = ''; $('#matchArea').innerHTML = ''; renderSkuBox();
   try { $('#eRecibe').value = localStorage.getItem('as_inv_recibe') || ''; } catch(e) {}
   fillSelects();
   mountPhotoSlot($('#slotDoc'), 'documento', 'Foto del documento', 'Factura, guía u orden de compra');
@@ -865,7 +972,10 @@ function nextStep() {
 
 function validateStep(n) {
   if (n === 2 && ING.modo === 'NUEVO') {
+    saveStep2();
     if (!$('#pNombre').value.trim()) return 'Escribe el nombre del producto.';
+    const top = similares(ING.np).filter(x => !ING.distintos.has(x.p.SKU))[0];
+    if (top && top.score >= 0.75) return `Parece que ya existe ${top.p.SKU} (${Math.round(top.score*100)}% similar). Toca “Es el mismo” o “Es distinto”.`;
     if (!$('#pCategoria').value) return 'Selecciona la categoría.';
     const min = $('#pMin').value; if (min !== '' && (!Number.isInteger(+min) || +min < 0)) return 'Stock mínimo no válido.';
     const bc = $('#pBarcode').value.trim();
@@ -883,7 +993,13 @@ function validateStep(n) {
     if (!$('#eRecibe').value.trim()) return 'Indica quién recibe el inventario.';
     try { localStorage.setItem('as_inv_recibe', $('#eRecibe').value.trim()); } catch(e) {}
   }
-  if (n === 4 && !$('#eDeclara').checked) return 'Marca la declaración de conteo físico para confirmar.';
+  if (n === 4) {
+    if (!ING.audit || !ING.audit.reglas) return 'Espera un momento: el auditor está revisando el ingreso.';
+    if (cancelElegido()) return 'Elegiste una respuesta que anula el ingreso. Cámbiala o cancela el ingreso.';
+    const falta = (ING.audit.preguntas || []).filter(q => q.requerida && !String(ING.respuestas[q.key]||'').trim());
+    if (falta.length) return `Responde ${falta.length === 1 ? 'la pregunta marcada' : 'las ' + falta.length + ' preguntas marcadas'} del auditor.`;
+    if (!$('#eDeclara').checked) return 'Marca la declaración de conteo físico para confirmar.';
+  }
   return '';
 }
 
@@ -913,16 +1029,21 @@ async function onCodeFound(r) {
 $$('.code-q').forEach(el => el.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); lookupCode(); } }));
 $('#codeBarras').addEventListener('input', () => { if ($('#codeBarras').value.trim() !== ING.codigo) ING.formato = ''; });
 
-const getCodes = () => ({ codigoBarras: $('#codeBarras').value.trim(), idProveedor: $('#codeIdProv').value.trim(), sku: $('#codeSku').value.trim().toUpperCase() });
+function getCodes() {
+  const bc = $('#codeBarras').value.trim(), idp = $('#codeIdProv').value.trim();
+  // Etiqueta SKU interna escaneada en el campo de código de barras → búsqueda por SKU
+  if (new RegExp(`^${S.skuPrefix}-[A-Z]{3}-\\d{3,}$`, 'i').test(bc)) return { codigoBarras:'', idProveedor:idp, sku:bc.toUpperCase(), etiquetaSku:true };
+  return { codigoBarras:bc, idProveedor:idp, sku:'' };
+}
 function clearCodes() {
-  ['codeBarras','codeIdProv','codeSku'].forEach(id => $('#'+id).value = '');
+  ['codeBarras','codeIdProv'].forEach(id => $('#'+id).value = '');
   ING.codigo = ''; ING.formato = ''; ING.fotos.barcode = null;
-  $('#bcDetected').innerHTML = ''; $('#matchArea').innerHTML = '';
+  $('#bcDetected').innerHTML = ''; $('#matchArea').innerHTML = ''; renderSkuBox();
 }
 
 async function lookupCode() {
   const q = getCodes();
-  if (!q.codigoBarras && !q.idProveedor && !q.sku) { toast('Ingresa al menos un código: barras, ID proveedor o SKU.', 'err'); return; }
+  if (!q.codigoBarras && !q.idProveedor && !q.sku) { toast('Ingresa el código de barras o el ID del proveedor.', 'err'); return; }
   ING.codigo = q.codigoBarras;
   $('#matchArea').innerHTML = '<div class="hint">Buscando en el catálogo…</div>';
   try {
@@ -937,17 +1058,18 @@ function matchCard(p, extra='') {
     <button class="btn btn-primary btn-sm" onclick="chooseExistingSku('${esc(p.SKU)}')">Entrada →</button></div>`;
 }
 function renderMatches(matches, q) {
-  const buscado = [q.codigoBarras && `Código de barras: ${esc(q.codigoBarras)}`, q.idProveedor && `ID proveedor: ${esc(q.idProveedor)}`, q.sku && `SKU: ${esc(q.sku)}`].filter(Boolean).join(' · ');
+  const buscado = [q.codigoBarras && `Código de barras: ${esc(q.codigoBarras)}`, q.idProveedor && `ID proveedor: ${esc(q.idProveedor)}`].filter(Boolean).join(' · ');
+  renderSkuBox(matches.length === 1 ? matches[0].SKU : '');
   if (matches.length) {
-    $('#matchArea').innerHTML = `<div class="section-label">Producto encontrado</div>` +
+    $('#matchArea').innerHTML = `<div class="section-label">${q.etiquetaSku ? 'Etiqueta SKU detectada' : 'Producto encontrado'}</div>` +
       matches.map(p => matchCard(p, `· coincide por ${esc(p._match)}`)).join('') +
       (q.codigoBarras || q.idProveedor ? `<div class="hint" style="margin-top:6px">¿Es otra talla/variante con el mismo código? <a href="#" style="color:var(--amber)" onclick="event.preventDefault();ING.permitirDuplicado=true;chooseNew()">Crear variante nueva</a></div>` : '');
-  } else if (q.sku && !q.codigoBarras && !q.idProveedor) {
-    $('#matchArea').innerHTML = `<div class="match"><div class="mthumb">❓</div><div class="minfo"><div class="mname">SKU no encontrado</div>
-      <div class="mmeta">${esc(q.sku)} · revisa el SKU, o busca por código de barras o ID del proveedor</div></div></div>`;
+  } else if (q.sku && !q.idProveedor) {
+    $('#matchArea').innerHTML = `<div class="match"><div class="mthumb">❓</div><div class="minfo"><div class="mname">Etiqueta SKU no encontrada</div>
+      <div class="mmeta">${esc(q.sku)} · el producto pudo ser dado de baja. Busca por código de barras o ID del proveedor.</div></div></div>`;
   } else {
     $('#matchArea').innerHTML = `<div class="match new"><div class="mthumb">✨</div><div class="minfo"><div class="mname">No registrado en el catálogo</div>
-      <div class="mmeta">${buscado}${q.sku ? '<br>⚠ El SKU escrito se ignora: el nuevo SKU se asigna automáticamente' : ''}</div></div>
+      <div class="mmeta">${buscado} · en el siguiente paso te muestro productos parecidos para no duplicar SKU</div></div>
       <button class="btn btn-primary btn-sm" onclick="chooseNew()">Crear producto →</button></div>`;
   }
 }
@@ -962,7 +1084,10 @@ $('#nameSearch').oninput = debounce(function() {
 document.addEventListener('click', e => { if (!e.target.closest('.typeahead')) $('#taList').classList.add('hidden'); });
 
 function chooseExistingSku(sku) { const p = S.productos.find(x => x.SKU === sku); if (p) chooseExisting(p); }
-function chooseExisting(p) { ING.modo = 'EXISTENTE'; ING.producto = p; ING.permitirDuplicado = false; $('#taList').classList.add('hidden'); goStep(2); }
+function chooseExisting(p) {
+  if (ING.modo === 'NUEVO' && ING.step === 2) toast(`Usarás el SKU existente ${p.SKU}: el ingreso suma a ese producto.`, 'ok');
+  ING.modo = 'EXISTENTE'; ING.producto = p; ING.permitirDuplicado = false; $('#taList').classList.add('hidden'); renderSkuBox(); goStep(2);
+}
 function chooseNew(sinCodigo) {
   ING.modo = 'NUEVO'; ING.producto = null;
   const q = getCodes();
@@ -989,7 +1114,7 @@ function renderStep2() {
   } else {
     const np = ING.np || {};
     box.innerHTML = `<div class="card">
-      <div class="card-title">✨ Nuevo producto <span class="tag amber" style="margin-left:auto">SKU se asigna al guardar</span></div>
+      <div class="card-title">✨ Nuevo producto <span class="tag amber" id="skuPreview" style="margin-left:auto" title="Se confirma al guardar">SKU: elige categoría</span></div>
       <div class="grid" style="grid-template-columns:minmax(180px,240px) 1fr;align-items:start">
         <div><div class="flabel">Foto del producto <span style="color:var(--amber)">recomendada</span></div><div class="photo-slot" id="slotProd" style="min-height:200px"></div></div>
         <div class="grid">
@@ -1008,12 +1133,14 @@ function renderStep2() {
         <div class="field"><label>Control</label><label class="switch"><input type="checkbox" id="pSerie" ${np.controlSerie?'checked':''}> Controlar por número de serie / IMEI</label></div>
       </div>
       <div class="field" style="margin-top:10px"><label>Notas / especificación</label><textarea id="pNotas" rows="2" maxlength="500" placeholder="Norma, material, compatibilidad…">${esc(np.notas||'')}</textarea></div>
+      <div id="simBox"></div>
     </div>`;
     if (np.categoria) $('#pCategoria').value = np.categoria;
     if (np.unidad) $('#pUnidad').value = np.unidad;
     if (np.ubicacion) $('#pUbic').value = np.ubicacion;
     $('#pCategoria').onchange = () => { const c = $('#pCategoria').value; if (['Tecnología','Comunicación'].includes(c) && !$('#pSerie').checked) { $('#pSerie').checked = true; toast('Sugerencia: equipos de tecnología/comunicación se controlan por serie.'); } };
-    box.querySelectorAll('input,select,textarea').forEach(el => el.addEventListener('input', debounce(() => { saveStep2(); renderSide(); }, 250)));
+    box.querySelectorAll('input,select,textarea').forEach(el => el.addEventListener('input', debounce(() => { saveStep2(); renderSim(); renderSide(); }, 250)));
+    renderSim();
   }
   mountPhotoSlot($('#slotProd'), 'producto', 'Foto del producto', 'Toca para tomar o subir');
 }
@@ -1022,6 +1149,24 @@ function saveStep2() {
   ING.np = { nombre:$('#pNombre').value.trim(), categoria:$('#pCategoria').value, variante:$('#pVariante').value.trim(), unidad:$('#pUnidad').value,
     stockMinimo:$('#pMin').value, codigoBarras:$('#pBarcode').value.trim(), idProveedor:$('#pIdProv').value.trim(), ubicacion:$('#pUbic').value,
     controlSerie:$('#pSerie').checked, notas:$('#pNotas').value.trim() };
+}
+function renderSim() {
+  const box = $('#simBox'); if (!box || ING.modo !== 'NUEVO') return;
+  saveStep2();
+  $('#skuPreview').textContent = ING.np.categoria ? `SKU propuesto: ${skuPreview(ING.np.categoria)}` : 'SKU: elige categoría';
+  const sims = similares(ING.np).filter(x => !ING.distintos.has(x.p.SKU));
+  if (!sims.length) { box.innerHTML = ''; return; }
+  box.innerHTML = `<div class="sim-box">
+    <div style="font-size:13px;font-weight:700;margin-bottom:8px">🤖 ¿Ya existe? Encontré ${sims.length === 1 ? 'un producto parecido' : 'productos parecidos'}</div>` +
+    sims.map(({p, score}) => `<div class="match" style="background:var(--bg-panel)">
+      <div class="mthumb">${imgTag(p.Foto_URL, catIcon(p.Categoria))}</div>
+      <div class="minfo"><div class="mname">${esc(p.Nombre)} ${p.Variante ? '· ' + esc(p.Variante) : ''}</div>
+        <div class="mmeta">${esc(p.SKU)} · stock ${fmtN(p.Stock)} · <b style="color:${score >= .75 ? 'var(--orange)' : 'var(--text-secondary)'}">${Math.round(score*100)}% similar</b></div></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
+        <button class="btn btn-primary btn-sm" onclick="chooseExistingSku('${esc(p.SKU)}')">Es el mismo · usar ${esc(p.SKU)}</button>
+        <button class="btn btn-sm" onclick="ING.distintos.add('${esc(p.SKU)}');renderSim()">Es distinto</button>
+      </div></div>`).join('') +
+    `<div class="hint">Usar el mismo SKU evita duplicados en el catálogo y mantiene un solo kardex por producto.</div></div>`;
 }
 const curProd = () => ING.modo === 'EXISTENTE' ? ING.producto : { Nombre:ING.np?.nombre, Variante:ING.np?.variante, Unidad:ING.np?.unidad, Ubicacion:ING.np?.ubicacion, Control_Serie: ING.np?.controlSerie?'SI':'NO', Categoria:ING.np?.categoria, Stock:0 };
 const needsSeries = () => curProd().Control_Serie === 'SI';
@@ -1119,11 +1264,85 @@ function renderReview() {
     </div>
     ${$('#eObs').value.trim()?`<div class="hint">📝 ${esc($('#eObs').value.trim())}</div>`:''}
     ${pics.length?`<div class="evid-grid" style="margin-top:12px">${pics.map(f=>`<div class="evid"><img src="${f.dataUrl}"></div>`).join('')}</div>`:''}`;
-  const al = computeAlerts();
+  const al = computeAlerts().filter(k => k !== 'DIFERENCIA_DOC');   // la diferencia la trata el auditor
   $('#auditList').innerHTML = al.length
-    ? al.map(k => `<div class="audit ${ALERT_TXT[k][0]}">${ALERT_TXT[k][0]==='bad'?'⛔':'⚠️'} ${ALERT_TXT[k][1]}</div>`).join('') + `<div class="hint">Puedes continuar; las alertas quedan registradas en el kardex para revisión.</div>`
-    : `<div class="audit ok">✓ Ingreso completo: documento, costo, proveedor y evidencia fotográfica.</div>`;
+    ? al.map(k => `<div class="audit ${ALERT_TXT[k][0]}">${ALERT_TXT[k][0]==='bad'?'⛔':'⚠️'} ${ALERT_TXT[k][1]}</div>`).join('') + `<div class="hint">Puedes continuar; quedan registradas en el kardex para revisión.</div>`
+    : `<div class="audit ok">✓ Registro completo: documento, costo, proveedor y evidencia fotográfica.</div>`;
+  runAudit();
 }
+
+// ─── Auditor IA del ingreso ───
+let auditSeq = 0;
+function entradaData() {
+  return { tipo:$('#eTipo').value, proveedorId:$('#eProv').value, docTipo:$('#eDocTipo').value, docNumero:$('#eDocNro').value.trim(),
+    cantidadDocumento:$('#eQtyDoc').value, cantidad:+$('#eQty').value, costo:$('#eCosto').value, moneda:$('#eMoneda').value,
+    lote:$('#eLote').value.trim(), vencimiento:$('#eVence').value, ubicacion:$('#eUbic').value,
+    series: needsSeries() ? getSeries() : [], recibidoPor:$('#eRecibe').value.trim(), observaciones:$('#eObs').value.trim() };
+}
+function auditPayload() {
+  const e = entradaData(); delete e.recibidoPor;            // no se envían datos personales a la IA
+  return { modo:ING.modo, sku:ING.producto?.SKU || '', producto: ING.modo === 'NUEVO' ? Object.assign({}, ING.np) : null,
+    confirmadoDistinto: ING.distintos.size > 0, entrada:e,
+    flags:{ fotoDocumento:!!ING.fotos.documento, fotosEvidencia:ING.fotos.evidencia.length, fotoProducto:!!(ING.fotos.producto || ING.producto?.Foto_URL) } };
+}
+async function runAudit() {
+  const seq = ++auditSeq;
+  ING.audit = { reglas:null, ia:null, iaError:'', loadingIA:S.ia.disponible, riesgo:'', preguntas:[] };
+  renderAI();
+  const payload = auditPayload();
+  try {
+    const r = await api('api_auditarIngreso', payload, false);
+    if (seq !== auditSeq) return;
+    ING.audit.reglas = r.hallazgos; ING.audit.riesgo = r.riesgo;
+  } catch(e) { if (seq !== auditSeq) return; ING.audit.reglas = []; ING.audit.iaError = e.message; }
+  renderAI();
+  if (!S.ia.disponible) return;
+  try {
+    const r = await api('api_auditarIngreso', payload, true);
+    if (seq !== auditSeq) return;
+    ING.audit.ia = r.ia; ING.audit.iaError = r.iaError || '';
+  } catch(e) { if (seq === auditSeq) ING.audit.iaError = e.message; }
+  if (seq === auditSeq) { ING.audit.loadingIA = false; renderAI(); }
+}
+const lvl = { bajo:0, medio:1, alto:2 };
+function renderAI() {
+  const A = ING.audit; if (!A) return;
+  const reglas = A.reglas || [], ia = A.ia;
+  // Preguntas: reglas (medio/alto con pregunta) + IA
+  A.preguntas = reglas.filter(h => h.pregunta && h.nivel !== 'info').map(h => ({ key:h.codigo, texto:h.pregunta, opciones:h.opciones, requerida:h.nivel === 'alto', origen:'regla' }))
+    .concat(ia ? ia.preguntas.map(q => ({ key:q.key, texto:q.texto, opciones:q.opciones, requerida:q.critica, origen:'ia' })) : []);
+  const riesgo = ['bajo','medio','alto'][Math.max(lvl[A.riesgo] ?? 0, lvl[ia?.riesgo] ?? 0)];
+  const rk = $('#aiRisk');
+  rk.classList.toggle('hidden', !A.reglas);
+  rk.className = 'risk ' + riesgo + (A.reglas ? '' : ' hidden'); rk.textContent = 'RIESGO ' + riesgo.toUpperCase();
+  A.riesgoFinal = riesgo;
+
+  if (!A.reglas) { $('#aiBody').innerHTML = `<div class="ai-src"><span class="mini-spin"></span> Revisando historial, proveedor y documento…</div>`; return; }
+  const ico = { alto:'⛔', medio:'⚠️', info:'ℹ️' };
+  const findings = reglas.map(h => ({ nivel:h.nivel, texto:h.texto, ia:false })).concat(ia ? ia.hallazgos.map(h => ({ nivel:h.nivel, texto:h.texto, ia:true })) : []);
+  let html = '';
+  if (ia && ia.resumen) html += `<div class="ai-sum">✨ ${esc(ia.resumen)}</div>`;
+  html += findings.length ? findings.map(f => `<div class="finding ${f.nivel}">${ico[f.nivel]} <span>${esc(f.texto)}${f.ia ? ' <b style="opacity:.7">· IA</b>' : ''}</span></div>`).join('')
+    : (A.loadingIA ? '' : `<div class="finding info" style="background:var(--green-dim);border-color:rgba(34,197,94,.25);color:#86efac">✓ Sin observaciones: precio, proveedor y documento coherentes con el historial.</div>`);
+  html += A.preguntas.map(q => {
+    const r = ING.respuestas[q.key] || '', isOpt = q.opciones.includes(r);
+    return `<div class="q ${r.trim() ? 'done' : q.requerida ? 'req' : ''}" data-k="${esc(q.key)}">
+      <div class="q-t">${q.origen === 'ia' ? '✨' : '❓'} ${esc(q.texto)}${q.requerida ? '<small>OBLIGATORIA</small>' : ''}</div>
+      <div class="q-opts">${q.opciones.map(o => `<button type="button" class="q-chip ${/cancelar/i.test(o) ? 'cancel' : ''} ${r === o ? 'sel' : ''}" data-k="${esc(q.key)}" data-v="${esc(o)}">${esc(o)}</button>`).join('')}</div>
+      <input type="text" placeholder="Otra respuesta (opcional)" data-k="${esc(q.key)}" value="${isOpt ? '' : esc(r)}" maxlength="200">
+    </div>`;
+  }).join('');
+  if (cancelElegido()) html += `<div class="audit bad" style="margin-top:10px;justify-content:space-between;align-items:center">⛔ Tu respuesta indica que este ingreso no debe registrarse.
+    <button class="btn btn-sm" style="border-color:var(--red);color:var(--red)" onclick="resetIng();toast('Ingreso cancelado. No se guardó nada.','ok')">Cancelar ingreso</button></div>`;
+  html += `<div class="ai-src">${A.loadingIA ? `<span class="mini-spin"></span> ${esc(S.ia.proveedor || 'IA')} analizando…` :
+    ia ? `✨ ${esc(S.ia.proveedor)} · ${esc(S.ia.modelo)} + reglas de control` :
+    S.ia.disponible ? `Reglas de control · IA no respondió${A.iaError ? ': ' + esc(A.iaError) : ''}` : 'Reglas de control · IA no configurada'}</div>`;
+  $('#aiBody').innerHTML = html;
+  $$('#aiBody .q-chip').forEach(b => b.onclick = () => { const k = b.dataset.k; ING.respuestas[k] = ING.respuestas[k] === b.dataset.v ? '' : b.dataset.v; renderAI(); });
+  $$('#aiBody .q input').forEach(i => i.oninput = () => { ING.respuestas[i.dataset.k] = i.value; i.closest('.q').classList.toggle('done', !!i.value.trim());
+    i.closest('.q').querySelectorAll('.q-chip').forEach(c => c.classList.remove('sel')); });
+}
+const cancelElegido = () => (ING.audit?.preguntas || []).some(q => /cancelar/i.test(ING.respuestas[q.key] || ''));
 
 function renderSide() {
   if (!$('#sideSummary')) return;
@@ -1134,7 +1353,7 @@ function renderSide() {
   $('#sideSummary').innerHTML =
     row('Modo', ING.modo === 'NUEVO' ? 'Producto nuevo' : ING.modo === 'EXISTENTE' ? 'Entrada a existente' : '—', 'amber') +
     row('Producto', p ? esc(p.Nombre || '—') : '—') +
-    row('SKU', ING.modo === 'EXISTENTE' ? esc(p.SKU) : ING.modo ? 'se asigna al guardar' : '—') +
+    row('SKU', ING.modo === 'EXISTENTE' ? esc(p.SKU) : ING.modo ? (ING.np?.categoria ? esc(skuPreview(ING.np.categoria)) + ' (propuesto)' : 'automático') : '—', 'amber') +
     row('Código', esc(ING.modo==='NUEVO' ? (ING.np?.codigoBarras||'—') : (p?.Codigo_Barras || ING.codigo || '—'))) +
     row('Cantidad', ING.step >= 3 ? '+' + fmtN(q) : '—', 'green') +
     row('Stock resultante', p && ING.step >= 3 ? fmtN(num(p.Stock) + q) : '—') +
@@ -1149,10 +1368,13 @@ async function submitIngreso() {
   const payload = {
     modo: ING.modo, sku: ING.producto?.SKU || '', permitirDuplicado: ING.permitirDuplicado, clientRequestId: ING.reqId,
     producto: ING.modo === 'NUEVO' ? Object.assign({}, ING.np, { formatoCodigo: ING.formato }) : null,
-    entrada: { tipo:$('#eTipo').value, proveedorId:$('#eProv').value, docTipo:$('#eDocTipo').value, docNumero:$('#eDocNro').value.trim(),
-      cantidadDocumento:$('#eQtyDoc').value, cantidad:+$('#eQty').value, costo:$('#eCosto').value, moneda:$('#eMoneda').value,
-      lote:$('#eLote').value.trim(), vencimiento:$('#eVence').value, ubicacion:$('#eUbic').value,
-      series: needsSeries() ? getSeries() : [], recibidoPor:$('#eRecibe').value.trim(), observaciones:$('#eObs').value.trim() },
+    confirmadoDistinto: ING.distintos.size > 0,
+    entrada: entradaData(),
+    auditoria: {
+      riesgoIA: ING.audit?.ia?.riesgo || '', resumenIA: ING.audit?.ia?.resumen || '', hallazgosIA: ING.audit?.ia?.hallazgos || [],
+      respuestas: Object.fromEntries(Object.entries(ING.respuestas).filter(([,v]) => String(v).trim())),
+      preguntas: (ING.audit?.preguntas || []).map(q => ({ key:q.key, texto:q.texto, respuesta:ING.respuestas[q.key] || '' }))
+    },
     fotos: { producto:pick(ING.fotos.producto), barcode:pick(ING.fotos.barcode), documento:pick(ING.fotos.documento), evidencia:ING.fotos.evidencia.map(pick) }
   };
   const nf = [payload.fotos.producto, payload.fotos.barcode, payload.fotos.documento].filter(Boolean).length + payload.fotos.evidencia.length;
@@ -1165,11 +1387,17 @@ async function submitIngreso() {
     if (S.movs) S.movs.unshift(r.movimiento);
     renderStock();
     LAST = { sku:r.sku, qty:Math.abs(r.stockDespues - r.stockAntes) };
-    $('#successId').innerHTML = `${esc(r.movId)}<br><span style="color:var(--text-primary)">${esc(r.sku)}</span> · stock ${fmtN(r.stockAntes)} → <b style="color:var(--green)">${fmtN(r.stockDespues)}</b>`;
-    $('#successAlerts').innerHTML = (r.alertas||[]).map(k => `<div class="audit ${(ALERT_TXT[k]||['warn'])[0]}">⚠️ ${esc((ALERT_TXT[k]||[,k])[1])}</div>`).join('');
+    $('#successId').innerHTML = `${esc(r.movId)}<br><span style="color:var(--text-primary)">${esc(r.sku)}</span> · stock ${fmtN(r.stockAntes)} → <b style="color:var(--green)">${fmtN(r.stockDespues)}</b>` +
+      (r.riesgo ? `<br><span class="risk ${esc(r.riesgo)}" style="display:inline-block;margin-top:6px">RIESGO ${esc(r.riesgo.toUpperCase())}</span>` : '');
+    $('#successAlerts').innerHTML = (r.alertas||[]).map(k => { const t = (ALERT_TXT[k]||['warn'])[0]; return `<div class="audit ${t === 'info' ? 'ok' : t}">${t === 'bad' ? '⛔' : t === 'info' ? 'ℹ️' : '⚠️'} ${esc((ALERT_TXT[k]||[,k])[1])}</div>`; }).join('');
     busy(false); openOv('successModal');
+    AUD = null;                                   // fuerza recalcular la auditoría general
     resetIng();
-  } catch(e) { busy(false); toast('No se registró: ' + e.message, 'err'); }
+  } catch(e) {
+    busy(false);
+    if (/^AUDIT:/.test(e.message)) { toast(e.message.replace(/^AUDIT:\s*/, ''), 'err'); runAudit(); }
+    else toast('No se registró: ' + e.message, 'err');
+  }
   finally { $('#btnNext').disabled = false; }
 }
 
@@ -1286,7 +1514,7 @@ function renderMovs() {
     <td>${esc(m.Proveedor||'—')}<br><span class="mono" style="font-size:10px">${esc(m.Doc_Tipo||'')} ${esc(m.Doc_Numero||'')}</span></td>
     <td>${esc(m.Recibido_Por)}<br><span class="mono" style="font-size:10px;color:var(--text-muted)">${esc(m.Usuario)}</span></td>
     <td style="white-space:nowrap">${link(m.Foto_Producto,'📦','Producto')}${link(m.Foto_Documento,'🧾','Documento')}${String(m.Fotos_Evidencia||'').split(/\s+/).filter(Boolean).map((u,i)=>link(u,'📷','Evidencia '+(i+1))).join('')}</td>
-    <td>${m.Alertas ? alertBadges(m.Alertas) : '<span class="badge badge-ok">OK</span>'}</td></tr>`).join('')
+    <td>${riskBadge(m.Riesgo)}${m.Alertas ? alertBadges(m.Alertas) : '<span class="badge badge-ok">OK</span>'}${m.Auditoria ? ` <span title="${esc(m.Auditoria)}" style="cursor:help">🤖</span>` : ''}</td></tr>`).join('')
     : '<tr><td colspan="10" class="empty">Sin movimientos</td></tr>';
 }
 $('#movSearch').oninput = debounce(renderMovs); $('#movAlert').onchange = renderMovs;
@@ -1337,6 +1565,42 @@ async function addUbicacion(selId) {
   catch(e) { toast(e.message, 'err'); }
 }
 
+// ═══════════════════════════════ AUDITOR GENERAL ═══════════════════════════════
+let AUD = null, audNivel = '';
+async function runAuditoria(conIA) {
+  if (conIA && !S.ia.disponible) return toast('IA no configurada: agrega ANTHROPIC_API_KEY (o GEMINI_API_KEY) en Propiedades del script. Las reglas siguen funcionando.', 'err');
+  $('#btnAud').disabled = $('#btnAudIA').disabled = true;
+  $('#audSub').innerHTML = conIA ? `<span class="mini-spin"></span> ${esc(S.ia.proveedor)} analizando proveedores, precios y stock…` : 'Ejecutando reglas de control…';
+  try { AUD = await api('api_auditoriaGeneral', !!conIA); renderAuditoria(); }
+  catch(e) { toast(e.message, 'err'); $('#audSub').textContent = 'Error al ejecutar la auditoría.'; }
+  finally { $('#btnAud').disabled = $('#btnAudIA').disabled = false; }
+}
+function renderAuditoria() {
+  const k = AUD.kpis, H = AUD.hallazgos;
+  $('#audSub').textContent = `Generado ${AUD.generado} · ${H.length} hallazgo${H.length !== 1 ? 's' : ''}`;
+  $('#audKpis').innerHTML = `
+    <div class="kpi ${k.altos ? 'bad' : 'ok'}"><div class="kpi-lbl">Hallazgos altos</div><div class="kpi-val">${k.altos}</div><div class="kpi-sub">Atender primero</div></div>
+    <div class="kpi"><div class="kpi-lbl">Ingresos analizados</div><div class="kpi-val">${fmtN(k.ingresos)}</div><div class="kpi-sub">${k.skus} SKUs · ${k.proveedores} proveedores</div></div>
+    <div class="kpi ${k.conAlertasPct > 30 ? 'warn' : ''}"><div class="kpi-lbl">Ingresos con alertas</div><div class="kpi-val">${k.conAlertasPct}%</div><div class="kpi-sub">Calidad del registro</div></div>
+    <div class="kpi ${k.altoRiesgo ? 'bad' : ''}"><div class="kpi-lbl">Ingresos riesgo alto</div><div class="kpi-val">${k.altoRiesgo}</div><div class="kpi-sub">Según auditor</div></div>
+    <div class="kpi ${k.integridad ? 'ok' : 'bad'}"><div class="kpi-lbl">Integridad kardex</div><div class="kpi-val">${k.integridad ? '✓' : '✗'}</div><div class="kpi-sub">${k.integridad ? 'Sin alteraciones' : 'Filas alteradas'}</div></div>`;
+  $('#audIA').innerHTML = AUD.ia ? `<div class="card ai-card" style="margin-bottom:18px">
+      <div class="ai-head"><div class="ai-dot">🤖</div><div><div style="font-weight:700;font-size:14px">Resumen ejecutivo</div><div class="hint" style="margin:0">${esc(S.ia.proveedor)} · ${esc(S.ia.modelo)}</div></div></div>
+      <div class="ai-sum">${AUD.ia.resumen.map(s => '• ' + esc(s)).join('<br>')}</div>
+      ${AUD.ia.acciones.length ? `<div class="section-label" style="color:#c4b5fd">Acciones recomendadas</div>` + AUD.ia.acciones.sort((a,b) => a.prioridad - b.prioridad).map(a => `<div class="accion"><b>${a.prioridad}.</b><span style="flex:1">${esc(a.accion)}</span><span class="tag">${esc(a.responsable)}</span></div>`).join('') : ''}
+    </div>` : AUD.iaError ? `<div class="audit warn" style="margin-bottom:14px">🤖 IA no disponible: ${esc(AUD.iaError)} — se muestran solo las reglas.</div>` : '';
+  const cnt = n => H.filter(h => h.nivel === n).length;
+  $('#audChips').innerHTML = [['', 'Todos', H.length], ['alto', '⛔ Alto', cnt('alto')], ['medio', '⚠️ Medio', cnt('medio')], ['info', 'ℹ️ Info', cnt('info')]]
+    .map(([v, l, n]) => `<button class="chip ${audNivel === v ? 'active' : ''}" data-v="${v}">${l} <span class="mono" style="opacity:.6">${n}</span></button>`).join('');
+  $$('#audChips .chip').forEach(b => b.onclick = () => { audNivel = b.dataset.v; renderAuditoria(); });
+  const list = H.filter(h => !audNivel || h.nivel === audNivel);
+  $('#audList').innerHTML = list.length ? list.map(h => `<div class="aud-item ${h.nivel}">
+      <div style="font-size:18px">${{alto:'⛔', medio:'⚠️', info:'ℹ️'}[h.nivel]}</div>
+      <div style="flex:1;min-width:0"><div class="ai-t">${esc(h.titulo)}</div><div class="ai-d">${esc(h.detalle)}</div><div class="tagrow"><span class="tag">${esc(h.area)}</span></div></div>
+      ${h.sku && S.productos.some(p => p.SKU === h.sku) ? `<button class="btn btn-sm" onclick="openDrawer('${esc(h.sku)}')">Ver</button>` : ''}
+    </div>`).join('') : `<div class="empty"><div>✅</div>Sin hallazgos en este nivel.</div>`;
+}
+
 // ═══════════════════════════════ ETIQUETAS ═══════════════════════════════
 async function printLabel(sku, copies) {
   const p = S.productos.find(x => x.SKU === sku); if (!p) return;
@@ -1357,7 +1621,7 @@ const MOCK = (() => {
     ubicaciones:['Bodega Central','Bodega Rampa','Check-in','Oficina Operaciones'],
     proveedores:[
       {Prov_ID:'PRV-0001',Nombre:'Seguridad Industrial CR S.A.',Identificacion:'3-101-456789',Contacto:'Marta Vargas',Telefono:'2222-1111',Email:'ventas@sicr.cr',Estado:'ACTIVO'},
-      {Prov_ID:'PRV-0002',Nombre:'Uniformes del Valle',Identificacion:'3-101-998877',Contacto:'José Mora',Telefono:'2440-2020',Email:'',Estado:'ACTIVO'},
+      {Prov_ID:'PRV-0002',Nombre:'Uniformes del Valle',Identificacion:'',Contacto:'José Mora',Telefono:'2440-2020',Email:'',Estado:'ACTIVO'},
       {Prov_ID:'PRV-0003',Nombre:'TecnoComunicaciones',Identificacion:'3-102-112233',Contacto:'Ana Solís',Telefono:'4000-5000',Email:'ana@tecnocom.cr',Estado:'ACTIVO'}],
     productos:[], movs:[], series:[]
   };
@@ -1377,7 +1641,45 @@ const MOCK = (() => {
   ];
   D.movs = D.productos.map((p,i) => ({Mov_ID:'MOV-261101-0800'+i+'-DEMO',Fecha_Hora:'2026-11-0'+(1+i%9)+' 08:0'+i,Tipo:'ENTRADA_INV_INICIAL',SKU:p.SKU,Producto:p.Nombre+(p.Variante?' · '+p.Variante:''),Cant_Documento:'',Cantidad:p.Stock,Diferencia:'',Stock_Antes:0,Stock_Despues:p.Stock,Costo_Unit:p.Costo_Ultimo,Moneda:p.Moneda,Total:p.Stock*p.Costo_Ultimo,Proveedor_ID:'',Proveedor:'',Doc_Tipo:'Acta interna',Doc_Numero:'INV-2026-11',Lote:'',Vencimiento:'',Ubicacion:p.Ubicacion,Series:'',Foto_Producto:'',Foto_Documento:'',Fotos_Evidencia:'',Recibido_Por:'María Sánchez',Usuario:'demo@asgh.cr',Alertas:i%3?'':'SIN_EVIDENCIA',Observaciones:''})).reverse();
   return {
-    api_bootstrap: () => ({ user:'demo@asgh.cr', tipos:D.tipos, monedas:['CRC','USD'], maxEvidencias:6, categorias:D.categorias, ubicaciones:D.ubicaciones, proveedores:D.proveedores, productos:D.productos, sheetUrl:'#' }),
+    api_bootstrap: () => ({ user:'demo@asgh.cr', tipos:D.tipos, monedas:['CRC','USD'], maxEvidencias:6, categorias:D.categorias, ubicaciones:D.ubicaciones, proveedores:D.proveedores, productos:D.productos, sheetUrl:'#',
+      skuPrefix:'AS', skuDigits:5, ia:{ disponible:true, proveedor:'IA simulada', modelo:'demo' } }),
+    api_auditarIngreso: (p, conIA) => {
+      const e = p.entrada, H = [], add = (codigo,nivel,texto,pregunta,opciones) => H.push({codigo,nivel,texto,pregunta:pregunta||'',opciones:opciones||[]});
+      const prod = p.modo === 'EXISTENTE' ? D.productos.find(x => x.SKU === p.sku) : null, q = +e.cantidad, c = e.costo === '' ? null : +e.costo;
+      const prov = D.proveedores.find(x => x.Prov_ID === e.proveedorId);
+      if (prod && c && prod.Costo_Promedio && prod.Moneda === e.moneda) { const v = (c - prod.Costo_Promedio)/prod.Costo_Promedio;
+        if (v > .2) add('PRECIO_ALTO', v > .5 ? 'alto' : 'medio', `Costo ${Math.round(v*100)}% sobre el promedio histórico (${fmtMoney(prod.Costo_Promedio, e.moneda)}).`, '¿Por qué subió el precio?', ['Aumento del proveedor','Modelo o calidad distinta','Compra urgente','Error de digitación — cancelar']);
+        if (v < -.3) add('PRECIO_BAJO','medio', `Costo ${Math.round(-v*100)}% por debajo del histórico.`, '¿Por qué el precio es tan bajo?', ['Promoción / descuento','Calidad o modelo distinto','Error de digitación — cancelar']); }
+      if (prov && e.tipo === 'COMPRA' && !prov.Identificacion) add('PROVEEDOR_SIN_ID','medio', `${prov.Nombre} no tiene cédula jurídica registrada.`, '¿El proveedor está formalmente registrado?', ['Sí, falta capturar la cédula','Es proveedor informal','No sé']);
+      if (prod && e.docNumero && D.movs.some(m => m.SKU === prod.SKU && String(m.Doc_Numero).toUpperCase() === e.docNumero.toUpperCase())) add('DOC_DUPLICADO','alto', `El documento ${e.docNumero} ya se registró para este producto.`, '¿Es una entrega parcial de la misma factura?', ['Sí, entrega parcial','Es otra factura con el mismo número','No, es un duplicado — cancelar']);
+      if (prod && D.movs.some(m => m.SKU === prod.SKU && m.Fecha_Hora === now())) add('REGISTRO_REPETIDO','alto','Ya se registró una entrada de este producto hace menos de 15 min.','¿Es un ingreso distinto al anterior?',['Sí, es otra entrega','No, es duplicado — cancelar']);
+      if (e.cantidadDocumento !== '' && +e.cantidadDocumento !== q) add('DIFERENCIA_DOC','alto', `Contado ${q} vs documento ${e.cantidadDocumento}.`, '¿Qué se hará con la diferencia?', ['Reclamo al proveedor','Nota de crédito','Llegará después','Error del documento']);
+      if (c !== null && c*q >= (e.moneda === 'USD' ? 1000 : 500000) && !p.flags.fotoDocumento) add('MONTO_ALTO_SIN_RESPALDO','alto', `Compra de ${fmtMoney(c*q, e.moneda)} sin foto del documento.`, '¿Dónde está el respaldo de esta compra?', ['Lo subiré después','Está en contabilidad','No hay documento']);
+      if (p.modo === 'NUEVO' && !p.confirmadoDistinto) { const s = similares(p.producto||{})[0]; if (s && s.score >= .75) add('POSIBLE_DUPLICADO','medio', `Muy parecido a ${s.p.SKU} · ${s.p.Nombre}.`, '¿Por qué crear un SKU nuevo?', ['Es otra talla / modelo','Otra marca o proveedor','Es el mismo — cancelar']); }
+      const riesgo = H.some(h => h.nivel === 'alto') ? 'alto' : H.some(h => h.nivel === 'medio') ? 'medio' : 'bajo';
+      let ia = null;
+      if (conIA) {
+        const nombre = prod ? prod.Nombre : p.producto?.nombre || '', unit = c !== null && q > 1 && c > 100000 && e.moneda === 'CRC';
+        ia = { riesgo, resumen: H.length ? `Ingreso de ${q} × ${nombre} con ${H.length} observación(es); confirma los puntos marcados antes de aprobar.` : `Ingreso coherente con el historial de ${nombre}; sin señales de riesgo.`,
+          preguntas: unit ? [{ key:'IA1', texto:`¿${fmtMoney(c, e.moneda)} es el costo por unidad o el total de la factura?`, opciones:['Es por unidad','Es el total — corregir — cancelar'], critica:true }] : [],
+          hallazgos: unit ? [{ nivel:'medio', texto:`El costo unitario parece alto para "${nombre}" en Costa Rica; podría ser el total digitado como unitario.` }] : [] };
+      }
+      return { hallazgos:H, riesgo, ia, iaError:'' };
+    },
+    api_auditoriaGeneral: conIA => {
+      const H = [];
+      D.productos.forEach(p => { if (p.Stock <= 0) H.push({area:'Stock',nivel:'medio',titulo:`${p.Nombre} · ${p.Variante}: sin stock`,detalle:`Mínimo definido: ${p.Stock_Minimo}.`,sku:p.SKU});
+        else if (p.Stock_Minimo && p.Stock <= p.Stock_Minimo) H.push({area:'Stock',nivel:'info',titulo:`${p.Nombre} · ${p.Variante}: bajo mínimo`,detalle:`Stock ${p.Stock} / mínimo ${p.Stock_Minimo}.`,sku:p.SKU}); });
+      H.push({area:'Precios',nivel:'medio',titulo:'Chaleco reflector · Talla L: 24% de diferencia entre proveedores',detalle:'Seguridad Industrial CR ₡6 800 · Uniformes del Valle ₡8 450',sku:'AS-EPP-00003'});
+      H.push({area:'Proveedores',nivel:'medio',titulo:'Uniformes del Valle sin cédula jurídica',detalle:'2 ingreso(s) sin identificación fiscal del proveedor.'});
+      H.push({area:'Proveedores',nivel:'medio',titulo:'Seguridad Industrial CR S.A. concentra 78% del gasto en CRC',detalle:'Alta dependencia de un solo proveedor: conviene cotizar alternativas.'});
+      D.movs.filter(m => /DIFERENCIA_DOC/.test(m.Alertas)).forEach(m => H.push({area:'Documentos',nivel:'alto',titulo:`Diferencia contra documento en ${m.Mov_ID}`,detalle:m.Producto,sku:m.SKU}));
+      const o = {alto:0,medio:1,info:2}; H.sort((a,b) => o[a.nivel]-o[b.nivel]);
+      const ent = D.movs.length;
+      return { generado:now(), hallazgos:H, iaError:'', kpis:{ ingresos:ent, conAlertasPct:Math.round(D.movs.filter(m=>m.Alertas).length/ent*100), altoRiesgo:D.movs.filter(m=>m.Riesgo==='alto').length, proveedores:D.proveedores.length, skus:D.productos.length, integridad:true, altos:H.filter(h=>h.nivel==='alto').length },
+        ia: conIA ? { resumen:['Stock crítico en orejeras y zapatos talla 42: riesgo de entregar EPP incompleto en rampa.','Un proveedor concentra la mayoría del gasto en colones; poca presión de precio.','Un proveedor activo no tiene cédula jurídica: riesgo fiscal y de trazabilidad.'],
+          acciones:[{prioridad:1,accion:'Reponer orejeras NRR 28 y zapatos talla 42 esta semana',responsable:'Compras'},{prioridad:2,accion:'Solicitar cédula jurídica a Uniformes del Valle antes de la próxima compra',responsable:'Compras'},{prioridad:3,accion:'Cotizar chalecos con al menos dos proveedores',responsable:'Compras'}] } : null };
+    },
     api_buscarCodigo: q => { const bc = (q.codigoBarras||'').trim(), idp = (q.idProveedor||'').trim().toUpperCase(), sku = (q.sku||'').trim().toUpperCase();
       return D.productos.map(p => { const m = [bc && String(p.Codigo_Barras)===bc && 'Código de barras', idp && String(p.ID_Proveedor).toUpperCase()===idp && 'ID proveedor', sku && p.SKU.toUpperCase()===sku && 'SKU'].filter(Boolean);
         return m.length ? Object.assign({}, p, {_match:m.join(' + ')}) : null; }).filter(Boolean); },
@@ -1385,6 +1687,9 @@ const MOCK = (() => {
     api_crearUbicacion: n => { if (!D.ubicaciones.includes(n)) D.ubicaciones.push(n); return n; },
     api_registrarIngreso: p => {
       const e = p.entrada; let prod;
+      const aud = MOCK.api_auditarIngreso(Object.assign({}, p, { flags:{ fotoDocumento:!!p.fotos.documento } }), false);
+      if (aud.hallazgos.some(h => h.nivel === 'alto' && h.pregunta && !(p.auditoria?.respuestas||{})[h.codigo])) throw new Error('AUDIT: Responde las preguntas del auditor.');
+      const lv = {bajo:0,medio:1,alto:2}, riesgo = ['bajo','medio','alto'][Math.max(lv[aud.riesgo], lv[p.auditoria?.riesgoIA] ?? 0)];
       if (p.modo === 'NUEVO') {
         const cat = D.categorias.find(c => c.nombre === p.producto.categoria);
         const n = D.productos.filter(x => x.SKU.startsWith('AS-'+cat.prefijo+'-')).length + 1;
@@ -1396,11 +1701,11 @@ const MOCK = (() => {
       const antes = prod.Stock, q = e.cantidad, c = e.costo === '' ? '' : +e.costo;
       prod.Stock = antes + q; prod.Actualizado_En = now();
       if (c !== '') { prod.Costo_Promedio = antes > 0 && prod.Costo_Promedio && prod.Moneda === e.moneda ? Math.round((antes*prod.Costo_Promedio + q*c)/(antes+q)*100)/100 : c; prod.Costo_Ultimo = c; prod.Moneda = e.moneda; }
-      const al = []; if (e.cantidadDocumento !== '' && +e.cantidadDocumento !== q) al.push('DIFERENCIA_DOC'); if (e.tipo==='COMPRA'&&!e.docNumero) al.push('SIN_DOCUMENTO'); if (e.tipo==='COMPRA'&&c==='') al.push('SIN_COSTO'); if (e.tipo==='COMPRA'&&!e.proveedorId) al.push('SIN_PROVEEDOR'); if (!p.fotos.documento && !p.fotos.evidencia.length) al.push('SIN_EVIDENCIA'); if (!prod.Foto_URL) al.push('SIN_FOTO_PRODUCTO');
+      const al = aud.hallazgos.map(h => h.codigo); if (e.tipo==='COMPRA'&&!e.docNumero) al.push('SIN_DOCUMENTO'); if (e.tipo==='COMPRA'&&c==='') al.push('SIN_COSTO'); if (e.tipo==='COMPRA'&&!e.proveedorId) al.push('SIN_PROVEEDOR'); if (!p.fotos.documento && !p.fotos.evidencia.length) al.push('SIN_EVIDENCIA'); if (!prod.Foto_URL) al.push('SIN_FOTO_PRODUCTO');
       const prov = D.proveedores.find(x => x.Prov_ID === e.proveedorId);
-      const mov = {Mov_ID:'MOV-'+Date.now().toString().slice(-8)+'-DEMO',Fecha_Hora:now(),Tipo:'ENTRADA_'+e.tipo,SKU:prod.SKU,Producto:prod.Nombre+(prod.Variante?' · '+prod.Variante:''),Cant_Documento:e.cantidadDocumento===''?'':+e.cantidadDocumento,Cantidad:q,Stock_Antes:antes,Stock_Despues:prod.Stock,Costo_Unit:c,Moneda:c===''?'':e.moneda,Proveedor:prov?.Nombre||'',Doc_Tipo:e.docTipo,Doc_Numero:e.docNumero,Series:e.series.join(', '),Recibido_Por:e.recibidoPor,Usuario:'demo@asgh.cr',Alertas:al.join(', '),Foto_Producto:'',Foto_Documento:'',Fotos_Evidencia:''};
+      const mov = {Mov_ID:'MOV-'+Date.now().toString().slice(-8)+'-DEMO',Fecha_Hora:now(),Tipo:'ENTRADA_'+e.tipo,SKU:prod.SKU,Producto:prod.Nombre+(prod.Variante?' · '+prod.Variante:''),Cant_Documento:e.cantidadDocumento===''?'':+e.cantidadDocumento,Cantidad:q,Stock_Antes:antes,Stock_Despues:prod.Stock,Costo_Unit:c,Moneda:c===''?'':e.moneda,Proveedor:prov?.Nombre||'',Doc_Tipo:e.docTipo,Doc_Numero:e.docNumero,Series:e.series.join(', '),Recibido_Por:e.recibidoPor,Usuario:'demo@asgh.cr',Alertas:al.join(', '),Riesgo:riesgo,Auditoria:(p.auditoria?.preguntas||[]).map(q=>q.texto+' → '+(q.respuesta||'—')).join(' | '),Foto_Producto:'',Foto_Documento:'',Fotos_Evidencia:''};
       D.movs.unshift(mov);
-      return { ok:true, movId:mov.Mov_ID, sku:prod.SKU, stockAntes:antes, stockDespues:prod.Stock, alertas:al, producto:prod, movimiento:mov };
+      return { ok:true, movId:mov.Mov_ID, sku:prod.SKU, stockAntes:antes, stockDespues:prod.Stock, alertas:al, riesgo, producto:prod, movimiento:mov };
     },
     api_movimientos: o => (o.sku ? D.movs.filter(m => m.SKU === o.sku) : D.movs).slice(0, o.limit || 200),
     api_verificarIntegridad: () => ({ ok:true, total:D.movs.length, rotos:[], verificadoEn:now() })
