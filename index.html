@@ -2,2127 +2,823 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0a0c0f">
 <title>AS Ground Handling · Salida de Inventario</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
-
-  :root {
-    --bg-base: #0a0c0f;
-    --bg-panel: #111318;
-    --bg-card: #161a21;
-    --bg-hover: #1c2029;
-    --border: #232834;
-    --border-active: #f59e0b;
-    --amber: #f59e0b;
-    --amber-dim: #92610a;
-    --amber-glow: rgba(245,158,11,0.12);
-    --green: #22c55e;
-    --green-dim: rgba(34,197,94,0.1);
-    --red: #ef4444;
-    --red-dim: rgba(239,68,68,0.1);
-    --blue: #3b82f6;
-    --text-primary: #f1f5f9;
-    --text-secondary: #94a3b8;
-    --text-muted: #475569;
-    --mono: 'JetBrains Mono', monospace;
-    --sans: 'Inter', sans-serif;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    background: var(--bg-base);
-    color: var(--text-primary);
-    font-family: var(--sans);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* ─── TOPBAR ─────────────────────────────── */
-  .topbar {
-    background: var(--bg-panel);
-    border-bottom: 1px solid var(--border);
-    padding: 0 24px;
-    height: 64px;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-shrink: 0;
-  }
-
-  .brand-icon {
-    width: 36px; height: 36px;
-    background: var(--amber);
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
-  }
-
-  .brand-text {
-    display: flex; flex-direction: column;
-  }
-
-  .brand-name {
-    font-family: var(--mono);
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-primary);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  .brand-sub {
-    font-size: 10px;
-    color: var(--text-muted);
-    letter-spacing: 0.05em;
-  }
-
-  .divider-v {
-    width: 1px;
-    height: 28px;
-    background: var(--border);
-    flex-shrink: 0;
-  }
-
-  /* Search */
-  .search-wrap {
-    flex: 1;
-    max-width: 520px;
-    position: relative;
-  }
-
-  .search-icon {
-    position: absolute;
-    left: 12px; top: 50%;
-    transform: translateY(-50%);
-    color: var(--text-muted);
-    font-size: 15px;
-    pointer-events: none;
-  }
-
-  #searchInput {
-    width: 100%;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px 12px 10px 38px;
-    color: var(--text-primary);
-    font-family: var(--sans);
-    font-size: 14px;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-
-  #searchInput:focus {
-    border-color: var(--amber);
-    box-shadow: 0 0 0 3px var(--amber-glow);
-  }
-
-  #searchInput::placeholder { color: var(--text-muted); }
-
-  .search-dropdown {
-    position: absolute;
-    top: calc(100% + 6px);
-    left: 0; right: 0;
-    background: var(--bg-card);
-    border: 1px solid var(--border-active);
-    border-radius: 10px;
-    overflow: hidden;
-    z-index: 200;
-    display: none;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-  }
-
-  .search-dropdown.open { display: block; }
-
-  .dropdown-item {
-    padding: 11px 16px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    transition: background 0.15s;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .dropdown-item:last-child { border-bottom: none; }
-  .dropdown-item:hover { background: var(--bg-hover); }
-
-  .item-icon {
-    width: 32px; height: 32px;
-    border-radius: 6px;
-    background: var(--amber-glow);
-    border: 1px solid var(--amber-dim);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 15px;
-    flex-shrink: 0;
-  }
-
-  .item-info { flex: 1; }
-  .item-name { font-size: 13px; font-weight: 500; color: var(--text-primary); }
-  .item-cat { font-size: 11px; color: var(--text-muted); }
-
-  .topbar-right {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .live-badge {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--green-dim);
-    border: 1px solid rgba(34,197,94,0.2);
-    border-radius: 20px;
-    padding: 4px 10px;
-    font-size: 11px;
-    font-family: var(--mono);
-    color: var(--green);
-    font-weight: 600;
-    letter-spacing: 0.05em;
-  }
-
-  .live-dot {
-    width: 6px; height: 6px;
-    background: var(--green);
-    border-radius: 50%;
-    animation: pulse 2s ease-in-out infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.5; transform: scale(0.8); }
-  }
-
-  .clock {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--text-muted);
-    letter-spacing: 0.05em;
-  }
-
-  /* ─── LAYOUT ──────────────────────────────── */
-  .layout {
-    display: grid;
-    grid-template-columns: 1fr 380px;
-    gap: 0;
-    min-height: calc(100vh - 64px);
-  }
-
-  /* ─── MAIN PANEL ──────────────────────────── */
-  .main-panel {
-    padding: 24px;
-    border-right: 1px solid var(--border);
-  }
-
-  .section-label {
-    font-family: var(--mono);
-    font-size: 10px;
-    font-weight: 600;
-    color: var(--amber);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .section-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
-
-  /* Products grid */
-  .products-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
-    gap: 12px;
-    margin-bottom: 28px;
-  }
-
-  .product-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 16px 14px;
-    cursor: pointer;
-    transition: all 0.18s;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .product-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: var(--amber);
-    transform: scaleX(0);
-    transition: transform 0.2s;
-  }
-
-  .product-card:hover {
-    border-color: var(--amber-dim);
-    background: var(--bg-hover);
-  }
-
-  .product-card:hover::before { transform: scaleX(1); }
-
-  .product-card.selected {
-    border-color: var(--amber);
-    background: var(--amber-glow);
-  }
-
-  .product-card.selected::before { transform: scaleX(1); }
-
-  .product-card.qty-0 {
-    opacity: 0.4;
-    pointer-events: none;
-  }
-
-  .prod-emoji { font-size: 28px; }
-
-  .prod-name {
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--text-primary);
-    line-height: 1.3;
-  }
-
-  .prod-stock {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text-muted);
-  }
-
-  .prod-stock.low { color: #f97316; }
-  .prod-stock.ok { color: var(--green); }
-
-  .check-badge {
-    position: absolute;
-    top: 8px; right: 8px;
-    width: 18px; height: 18px;
-    background: var(--amber);
-    border-radius: 50%;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    font-size: 10px;
-    color: #000;
-    font-weight: 700;
-  }
-
-  .product-card.selected .check-badge { display: flex; }
-
-  /* Size/qty selectors */
-  .selection-detail {
-    background: var(--bg-card);
-    border: 1px solid var(--border-active);
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 20px;
-    display: none;
-  }
-
-  .selection-detail.visible { display: block; }
-
-  .detail-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 16px;
-  }
-
-  .detail-emoji { font-size: 32px; }
-
-  .detail-title {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--text-primary);
-  }
-
-  .detail-sub {
-    font-size: 12px;
-    color: var(--text-secondary);
-    margin-top: 2px;
-  }
-
-  .field-row {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin-bottom: 14px;
-  }
-
-  .field-group { flex: 1; min-width: 120px; }
-
-  .field-label {
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--text-muted);
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-
-  .field-group select,
-  .field-group input {
-    width: 100%;
-    background: var(--bg-base);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 8px 10px;
-    color: var(--text-primary);
-    font-family: var(--sans);
-    font-size: 13px;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-
-  .field-group select:focus,
-  .field-group input:focus {
-    border-color: var(--amber);
-  }
-
-  .field-group select option { background: var(--bg-card); }
-
-  /* Qty control */
-  .qty-control {
-    display: flex;
-    align-items: center;
-    gap: 0;
-    background: var(--bg-base);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    overflow: hidden;
-    width: fit-content;
-  }
-
-  .qty-btn {
-    width: 32px; height: 34px;
-    background: none;
-    border: none;
-    color: var(--text-secondary);
-    font-size: 16px;
-    cursor: pointer;
-    transition: all 0.15s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .qty-btn:hover { background: var(--bg-hover); color: var(--amber); }
-
-  .qty-display {
-    width: 40px;
-    text-align: center;
-    font-family: var(--mono);
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-primary);
-    border-left: 1px solid var(--border);
-    border-right: 1px solid var(--border);
-    padding: 6px 0;
-  }
-
-  /* ─── ORDER CART ──────────────────────────── */
-  .cart-section {
-    margin-top: 4px;
-  }
-
-  .cart-empty {
-    text-align: center;
-    padding: 32px 20px;
-    color: var(--text-muted);
-    font-size: 13px;
-  }
-
-  .cart-empty-icon { font-size: 36px; margin-bottom: 8px; opacity: 0.3; }
-
-  .cart-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 14px;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    margin-bottom: 8px;
-    transition: all 0.15s;
-  }
-
-  .cart-item-emoji { font-size: 20px; }
-
-  .cart-item-info { flex: 1; }
-
-  .cart-item-name {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-primary);
-  }
-
-  .cart-item-meta {
-    font-size: 11px;
-    color: var(--text-muted);
-    font-family: var(--mono);
-    margin-top: 2px;
-  }
-
-  .cart-remove {
-    width: 26px; height: 26px;
-    border: none;
-    background: var(--red-dim);
-    color: var(--red);
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.15s;
-  }
-
-  .cart-remove:hover { background: rgba(239,68,68,0.2); }
-
-  .add-to-cart-btn {
-    width: 100%;
-    background: var(--amber-glow);
-    border: 1px solid var(--amber);
-    color: var(--amber);
-    padding: 10px;
-    border-radius: 8px;
-    font-family: var(--sans);
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    margin-top: 4px;
-  }
-
-  .add-to-cart-btn:hover {
-    background: var(--amber);
-    color: #000;
-  }
-
-  /* ─── SIDE PANEL ──────────────────────────── */
-  .side-panel {
-    padding: 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-  }
-
-  /* Step indicator */
-  .steps {
-    display: flex;
-    gap: 0;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-  }
-
-  .step {
-    flex: 1;
-    padding: 10px 8px;
-    text-align: center;
-    border-right: 1px solid var(--border);
-    transition: all 0.2s;
-  }
-
-  .step:last-child { border-right: none; }
-
-  .step-num {
-    font-family: var(--mono);
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--text-muted);
-    line-height: 1;
-  }
-
-  .step-lbl {
-    font-size: 9px;
-    color: var(--text-muted);
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    margin-top: 3px;
-  }
-
-  .step.active .step-num { color: var(--amber); }
-  .step.active .step-lbl { color: var(--amber); }
-  .step.done .step-num { color: var(--green); }
-  .step.done .step-lbl { color: var(--green); }
-  .step.done { background: var(--green-dim); }
-
-  /* Summary box */
-  .summary-box {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 18px;
-  }
-
-  .summary-title {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 14px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .summary-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 6px 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 12px;
-  }
-
-  .summary-row:last-child { border-bottom: none; }
-  .summary-key { color: var(--text-muted); }
-  .summary-val { color: var(--text-primary); font-family: var(--mono); font-size: 11px; }
-  .summary-val.amber { color: var(--amber); }
-
-  /* Scan credential */
-  .scan-box {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 18px;
-  }
-
-  .scan-area {
-    border: 2px dashed var(--border);
-    border-radius: 10px;
-    padding: 24px 16px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-bottom: 14px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .scan-area:hover {
-    border-color: var(--amber);
-    background: var(--amber-glow);
-  }
-
-  .scan-area.scanned {
-    border-color: var(--green);
-    border-style: solid;
-    background: var(--green-dim);
-  }
-
-  .scan-area .scan-icon { font-size: 32px; margin-bottom: 8px; }
-  .scan-area .scan-text { font-size: 12px; color: var(--text-secondary); }
-  .scan-area .scan-text strong { display: block; color: var(--text-primary); font-size: 13px; margin-bottom: 4px; }
-
-  .scan-laser {
-    position: absolute;
-    top: 0; left: -100%;
-    width: 60%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(245,158,11,0.15), transparent);
-    animation: laser 2s ease-in-out infinite;
-    display: none;
-  }
-
-  .scan-area.scanning .scan-laser { display: block; }
-
-  @keyframes laser {
-    0% { left: -60%; }
-    100% { left: 100%; }
-  }
-
-  .employee-result {
-    display: none;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 14px;
-  }
-
-  .employee-result.visible { display: flex; }
-
-  .emp-avatar {
-    width: 44px; height: 44px;
-    border-radius: 50%;
-    background: var(--amber);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
-    font-weight: 700;
-    color: #000;
-    flex-shrink: 0;
-  }
-
-  .emp-info { flex: 1; }
-  .emp-name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
-  .emp-id { font-family: var(--mono); font-size: 11px; color: var(--amber); margin-top: 2px; }
-  .emp-role { font-size: 11px; color: var(--text-muted); }
-
-  /* Signature */
-  .sig-wrap {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 18px;
-  }
-
-  .sig-title {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 10px;
-  }
-
-  #sigCanvas {
-    width: 100%;
-    height: 120px;
-    background: #0d1017;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    cursor: crosshair;
-    display: block;
-    touch-action: none;
-  }
-
-  .sig-actions {
-    display: flex;
-    gap: 8px;
-    margin-top: 8px;
-  }
-
-  .sig-clear {
-    flex: 1;
-    background: none;
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    padding: 7px;
-    border-radius: 6px;
-    font-size: 12px;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
-  .sig-clear:hover { border-color: var(--red); color: var(--red); }
-
-  /* Submit btn */
-  .submit-btn {
-    width: 100%;
-    background: var(--amber);
-    border: none;
-    color: #000;
-    padding: 14px;
-    border-radius: 10px;
-    font-family: var(--sans);
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    letter-spacing: 0.02em;
-    opacity: 0.4;
-    pointer-events: none;
-  }
-
-  .submit-btn.ready {
-    opacity: 1;
-    pointer-events: all;
-  }
-
-  .submit-btn.ready:hover {
-    background: #fbbf24;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 20px rgba(245,158,11,0.4);
-  }
-
-  /* ─── LOG TABLE ───────────────────────────── */
-  .log-section {
-    padding: 0 24px 24px;
-    grid-column: 1 / -1;
-    border-top: 1px solid var(--border);
-    margin-top: 0;
-  }
-
-  .log-wrap { padding-top: 24px; }
-
-  .log-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 12px;
-  }
-
-  .log-table th {
-    text-align: left;
-    padding: 8px 12px;
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text-muted);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    border-bottom: 1px solid var(--border);
-    font-weight: 500;
-  }
-
-  .log-table td {
-    padding: 10px 12px;
-    border-bottom: 1px solid var(--border);
-    color: var(--text-secondary);
-    vertical-align: middle;
-  }
-
-  .log-table tr:last-child td { border-bottom: none; }
-
-  .log-table tr:hover td { background: var(--bg-hover); }
-
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 3px 8px;
-    border-radius: 20px;
-    font-family: var(--mono);
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-  }
-
-  .badge-ok { background: var(--green-dim); color: var(--green); border: 1px solid rgba(34,197,94,0.2); }
-  .badge-pending { background: rgba(245,158,11,0.1); color: var(--amber); border: 1px solid rgba(245,158,11,0.2); }
-
-  /* ─── MODAL SUCCESS ───────────────────────── */
-  .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.8);
-    backdrop-filter: blur(4px);
-    z-index: 500;
-    display: none;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .modal-overlay.show { display: flex; }
-
-  .modal {
-    background: var(--bg-panel);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 36px;
-    max-width: 400px;
-    width: 90%;
-    text-align: center;
-    animation: slideUp 0.3s ease;
-  }
-
-  @keyframes slideUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .modal-icon {
-    font-size: 52px;
-    margin-bottom: 16px;
-  }
-
-  .modal-title {
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--text-primary);
-    margin-bottom: 8px;
-  }
-
-  .modal-sub {
-    font-size: 13px;
-    color: var(--text-secondary);
-    line-height: 1.6;
-    margin-bottom: 24px;
-  }
-
-  .modal-id {
-    font-family: var(--mono);
-    font-size: 12px;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 8px 12px;
-    color: var(--amber);
-    margin-bottom: 24px;
-    letter-spacing: 0.05em;
-  }
-
-  .modal-close {
-    background: var(--amber);
-    border: none;
-    color: #000;
-    padding: 12px 28px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    font-family: var(--sans);
-    transition: all 0.15s;
-  }
-
-  .modal-close:hover { background: #fbbf24; }
-
-  /* ─── RESPONSIVE ──────────────────────────── */
-  @media (max-width: 900px) {
-    .layout { grid-template-columns: 1fr; }
-    .side-panel { border-top: 1px solid var(--border); }
-    .log-section { border-top: 1px solid var(--border); }
-    .products-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
-  }
-
-  /* manual ID input */
-  .manual-scan {
-    margin-top: 10px;
-  }
-
-  .manual-scan input {
-    width: 100%;
-    background: var(--bg-base);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 8px 10px;
-    color: var(--text-primary);
-    font-family: var(--mono);
-    font-size: 13px;
-    outline: none;
-    transition: border-color 0.2s;
-    letter-spacing: 0.05em;
-  }
-
-  .manual-scan input:focus { border-color: var(--amber); }
-
-  .scan-hint {
-    font-size: 10px;
-    color: var(--text-muted);
-    text-align: center;
-    margin-top: 6px;
-  }
-
-  .no-results {
-    padding: 12px 16px;
-    color: var(--text-muted);
-    font-size: 13px;
-    text-align: center;
-  }
-
-  /* ─── RESCAN BTN ──────────────────────────── */
-  .rescan-btn {
-    width: 28px; height: 28px;
-    border: 1px solid var(--border);
-    background: var(--bg-base);
-    color: var(--text-muted);
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.15s;
-    flex-shrink: 0;
-  }
-  .rescan-btn:hover { border-color: var(--amber); color: var(--amber); }
-
-  /* ─── VALIDATION FIELDS ───────────────────── */
-  .validation-fields {
-    margin-top: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .vfield {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 7px 10px;
-    border-radius: 6px;
-    background: var(--bg-base);
-    border: 1px solid var(--border);
-    font-size: 12px;
-  }
-
-  .vfield-icon { font-size: 13px; flex-shrink: 0; width: 18px; text-align: center; }
-  .vfield-key { color: var(--text-muted); width: 80px; flex-shrink: 0; font-size: 11px; }
-  .vfield-val { color: var(--text-primary); font-family: var(--mono); font-size: 11px; flex: 1; }
-  .vfield-status { font-size: 13px; flex-shrink: 0; }
-
-  .vfield.ok { border-color: rgba(34,197,94,0.2); background: var(--green-dim); }
-  .vfield.warn { border-color: rgba(239,68,68,0.3); background: var(--red-dim); }
-  .vfield.neutral { border-color: var(--border); }
-
-  /* Alert banner */
-  .scan-alert {
-    margin-top: 10px;
-    padding: 10px 14px;
-    border-radius: 8px;
-    font-size: 12px;
-    font-weight: 600;
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    line-height: 1.5;
-  }
-
-  .scan-alert.alert-error {
-    background: var(--red-dim);
-    border: 1px solid rgba(239,68,68,0.3);
-    color: var(--red);
-  }
-
-  .scan-alert.alert-warning {
-    background: rgba(245,158,11,0.1);
-    border: 1px solid rgba(245,158,11,0.3);
-    color: var(--amber);
-  }
-
-  .scan-alert.alert-ok {
-    background: var(--green-dim);
-    border: 1px solid rgba(34,197,94,0.2);
-    color: var(--green);
-  }
-
-  /* ─── UPLOAD LABEL ────────────────────────── */
-  .upload-label {
-    font-size: 12px;
-    color: var(--text-muted);
-    cursor: pointer;
-    padding: 6px 12px;
-    border: 1px dashed var(--border);
-    border-radius: 6px;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    transition: all 0.15s;
-  }
-  .upload-label:hover { border-color: var(--amber); color: var(--amber); }
-
-  /* ─── CAMERA MODAL ────────────────────────── */
-  .camera-modal {
-    background: var(--bg-panel);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    width: 90%;
-    max-width: 480px;
-    overflow: hidden;
-    animation: slideUp 0.3s ease;
-  }
-
-  .camera-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .camera-title {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .cam-close {
-    width: 30px; height: 30px;
-    border: 1px solid var(--border);
-    background: var(--bg-card);
-    color: var(--text-muted);
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 13px;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.15s;
-  }
-  .cam-close:hover { border-color: var(--red); color: var(--red); }
-
-  .cam-preview-wrap {
-    position: relative;
-    background: #000;
-    width: 100%;
-    aspect-ratio: 4/3;
-    overflow: hidden;
-  }
-
-  #camVideo {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-
-  .cam-overlay {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-  }
-
-  .cam-frame {
-    width: 75%;
-    aspect-ratio: 1.6;
-    position: relative;
-  }
-
-  .corner {
-    position: absolute;
-    width: 20px; height: 20px;
-    border-color: var(--amber);
-    border-style: solid;
-  }
-  .corner.tl { top: 0; left: 0; border-width: 2px 0 0 2px; }
-  .corner.tr { top: 0; right: 0; border-width: 2px 2px 0 0; }
-  .corner.bl { bottom: 0; left: 0; border-width: 0 0 2px 2px; }
-  .corner.br { bottom: 0; right: 0; border-width: 0 2px 2px 0; }
-
-  .cam-hint {
-    font-size: 11px;
-    color: rgba(255,255,255,0.7);
-    background: rgba(0,0,0,0.5);
-    padding: 4px 10px;
-    border-radius: 20px;
-    letter-spacing: 0.03em;
-  }
-
-  .cam-actions {
-    display: flex;
-    gap: 10px;
-    padding: 16px 20px 10px;
-  }
-
-  .cam-btn-primary {
-    flex: 2;
-    background: var(--amber);
-    border: none;
-    color: #000;
-    padding: 12px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    font-family: var(--sans);
-    transition: all 0.15s;
-  }
-  .cam-btn-primary:hover { background: #fbbf24; }
-
-  .cam-btn-secondary {
-    flex: 1;
-    background: none;
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    padding: 12px;
-    border-radius: 8px;
-    font-size: 13px;
-    cursor: pointer;
-    font-family: var(--sans);
-    transition: all 0.15s;
-  }
-  .cam-btn-secondary:hover { border-color: var(--red); color: var(--red); }
-
-  /* Analyzing state */
-  .analyzing-wrap {
-    padding: 28px 24px 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-    text-align: center;
-  }
-
-  .analyzing-spinner {
-    width: 44px; height: 44px;
-    border: 3px solid var(--border);
-    border-top-color: var(--amber);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
-
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .analyzing-title {
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--text-primary);
-  }
-
-  .analyzing-sub {
-    font-size: 12px;
-    color: var(--text-secondary);
-  }
-
-  .analyze-steps {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    text-align: left;
-    margin-top: 4px;
-  }
-
-  .astep {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--text-muted);
-    padding: 5px 10px;
-    border-radius: 4px;
-    transition: all 0.3s;
-  }
-
-  .astep.active {
-    color: var(--amber);
-    background: var(--amber-glow);
-  }
-
-  .astep.done {
-    color: var(--green);
-    background: var(--green-dim);
-  }
-
-
-
-  /* ─── CATÁLOGO: BUSCADOR + FILTROS ─────────── */
-  .catalog-box {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 20px;
-  }
-  .catalog-search { position: relative; }
-  .catalog-search .search-icon { left: 14px; }
-  #prodSearch {
-    width: 100%;
-    background: var(--bg-base);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 12px 12px 12px 40px;
-    color: var(--text-primary);
-    font-family: var(--sans);
-    font-size: 15px;
-    outline: none;
-    transition: border-color .2s;
-  }
-  #prodSearch:focus { border-color: var(--amber); box-shadow: 0 0 0 3px var(--amber-glow); }
-  #prodSearch::placeholder { color: var(--text-muted); }
-  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 10px; }
-  .chip {
-    background: var(--bg-base);
-    border: 1px solid var(--border);
-    color: var(--text-secondary);
-    border-radius: 20px;
-    padding: 4px 10px;
-    font-size: 11px;
-    cursor: pointer;
-    transition: all .15s;
-    font-family: var(--sans);
-  }
-  .chip:hover { border-color: var(--amber-dim); color: var(--text-primary); }
-  .chip.active { background: var(--amber-glow); border-color: var(--amber); color: var(--amber); font-weight: 600; }
-  .chip .n { font-family: var(--mono); opacity: .7; margin-left: 4px; }
-  .results-meta { font-size: 11px; color: var(--text-muted); font-family: var(--mono); margin-bottom: 6px; }
-  .results-list {
-    max-height: 340px;
-    overflow-y: auto;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    background: var(--bg-base);
-  }
-  .result-row {
-    display: flex; align-items: center; gap: 10px;
-    padding: 9px 12px;
-    border-bottom: 1px solid var(--border);
-    cursor: pointer;
-    transition: background .12s;
-  }
-  .result-row:last-child { border-bottom: none; }
-  .result-row:hover, .result-row.kbd { background: var(--bg-hover); }
-  .result-row.selected { background: var(--amber-glow); }
-  .r-code {
-    font-family: var(--mono); font-size: 10px; color: var(--amber);
-    background: var(--amber-glow); border: 1px solid var(--amber-dim);
-    border-radius: 4px; padding: 2px 6px; flex-shrink: 0; min-width: 74px; text-align: center;
-  }
-  .r-name { flex: 1; font-size: 13px; color: var(--text-primary); }
-  .r-name mark { background: rgba(245,158,11,.25); color: var(--text-primary); border-radius: 2px; }
-  .r-cat { font-size: 10px; color: var(--text-muted); flex-shrink: 0; }
-  .r-stock { font-family: var(--mono); font-size: 10px; flex-shrink: 0; min-width: 54px; text-align: right; }
-  .r-stock.ok { color: var(--green); } .r-stock.low { color: #f97316; } .r-stock.zero { color: var(--red); }
-  .tag-used { font-size: 9px; font-family: var(--mono); color: #f97316; border: 1px solid rgba(249,115,22,.4); border-radius: 4px; padding: 1px 4px; margin-left: 6px; }
-  .detail-code { font-family: var(--mono); font-size: 11px; color: var(--amber); }
-  .field-group textarea {
-    width: 100%; background: var(--bg-base); border: 1px solid var(--border); border-radius: 6px;
-    padding: 8px 10px; color: var(--text-primary); font-family: var(--sans); font-size: 13px; outline: none; resize: vertical; min-height: 36px;
-  }
-  .field-group textarea:focus { border-color: var(--amber); }
-  .conn-badge { display:flex; align-items:center; gap:6px; border-radius:20px; padding:4px 10px; font-size:11px; font-family:var(--mono); font-weight:600; letter-spacing:.05em; }
-  .conn-badge.ok { background: var(--green-dim); border:1px solid rgba(34,197,94,.2); color: var(--green); }
-  .conn-badge.off { background: var(--red-dim); border:1px solid rgba(239,68,68,.3); color: var(--red); }
-  .conn-badge.wait { background: var(--amber-glow); border:1px solid var(--amber-dim); color: var(--amber); }
-  .submit-btn.loading { opacity: .7; pointer-events: none; }
-  .log-empty { text-align:center; color: var(--text-muted); padding: 20px; font-size: 12px; }
-  .log-table a { color: var(--blue); text-decoration: none; font-size: 11px; }
+:root{
+  --bg:#0a0c0f;--panel:#111318;--card:#161a21;--hover:#1c2029;--border:#232834;
+  --amber:#f59e0b;--amber-dim:#92610a;--amber-glow:rgba(245,158,11,.12);
+  --green:#22c55e;--green-dim:rgba(34,197,94,.1);--red:#ef4444;--red-dim:rgba(239,68,68,.1);
+  --t1:#f1f5f9;--t2:#94a3b8;--t3:#64748b;
+  --mono:'JetBrains Mono',ui-monospace,monospace;--sans:'Inter',system-ui,-apple-system,sans-serif;
+  --bar-h:76px;--safe-b:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--t1);font-family:var(--sans);font-size:15px}
+body{min-height:100dvh}
+button{font-family:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit;font-size:16px} /* 16px evita zoom en iOS */
+
+/* ── HEADER ── */
+.topbar{position:sticky;top:0;z-index:50;background:var(--panel);border-bottom:1px solid var(--border);
+  padding:10px 14px;padding-top:calc(10px + env(safe-area-inset-top,0px));display:flex;align-items:center;gap:10px}
+.brand-icon{width:34px;height:34px;border-radius:8px;background:var(--amber);display:flex;align-items:center;justify-content:center;font-size:17px;color:#000;flex-shrink:0}
+.brand{flex:1;min-width:0}
+.brand-name{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+.brand-sub{font-size:11px;color:var(--t3)}
+.icon-btn{position:relative;width:40px;height:40px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--t1);font-size:18px;display:flex;align-items:center;justify-content:center}
+.icon-btn .count{position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:var(--amber);color:#000;font-size:10px;font-weight:700;font-family:var(--mono);display:none;align-items:center;justify-content:center}
+.icon-btn .count.on{display:flex}
+.conn{width:10px;height:10px;border-radius:50%;background:var(--amber);flex-shrink:0;box-shadow:0 0 0 3px var(--amber-glow)}
+.conn.ok{background:var(--green);box-shadow:0 0 0 3px var(--green-dim)}
+.conn.off{background:var(--red);box-shadow:0 0 0 3px var(--red-dim)}
+
+/* ── PROGRESO ── */
+.progress{display:flex;gap:6px;padding:10px 14px 4px;background:var(--bg)}
+.pstep{flex:1;text-align:center}
+.pbar{height:4px;border-radius:2px;background:var(--border);transition:background .25s}
+.plbl{font-size:10px;color:var(--t3);margin-top:5px;letter-spacing:.04em;text-transform:uppercase}
+.pstep.active .pbar{background:var(--amber)} .pstep.active .plbl{color:var(--amber);font-weight:600}
+.pstep.done .pbar{background:var(--green)} .pstep.done .plbl{color:var(--green)}
+
+/* ── VISTAS ── */
+main{max-width:760px;margin:0 auto;padding:12px 14px calc(var(--bar-h) + var(--safe-b) + 20px)}
+.view{display:none;animation:fade .2s ease}
+.view.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.h1{font-size:19px;font-weight:700;margin-bottom:4px}
+.sub{font-size:13px;color:var(--t2);margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px}
+.lbl{font-size:11px;font-weight:600;color:var(--t3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
+
+/* Buscador */
+.search{position:sticky;top:calc(58px + env(safe-area-inset-top,0px));z-index:20;background:var(--bg);padding:4px 0 8px}
+.search-in{position:relative}
+.search-in span{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--t3)}
+.search-in .clear{left:auto;right:6px;width:36px;height:36px;border:none;background:none;color:var(--t3);font-size:16px;display:none;transform:translateY(-50%)}
+#prodSearch{width:100%;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:13px 44px 13px 42px;color:var(--t1);outline:none}
+#prodSearch:focus{border-color:var(--amber);box-shadow:0 0 0 3px var(--amber-glow)}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:10px 0 2px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex-shrink:0;background:var(--card);border:1px solid var(--border);color:var(--t2);border-radius:20px;padding:7px 12px;font-size:12px;white-space:nowrap}
+.chip.on{background:var(--amber-glow);border-color:var(--amber);color:var(--amber);font-weight:600}
+.chip .n{font-family:var(--mono);opacity:.7;margin-left:4px;font-size:11px}
+.meta{font-size:11px;color:var(--t3);font-family:var(--mono);margin:6px 2px}
+.results{display:flex;flex-direction:column;gap:8px}
+.row{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:left;color:var(--t1);width:100%}
+.row:active{background:var(--hover)}
+.row .em{font-size:22px;width:28px;text-align:center;flex-shrink:0}
+.row .info{flex:1;min-width:0}
+.row .nm{font-size:14px;font-weight:500;line-height:1.3;word-break:break-word}
+.row .nm mark{background:rgba(245,158,11,.28);color:inherit;border-radius:2px}
+.row .mt{display:flex;gap:8px;align-items:center;margin-top:4px;flex-wrap:wrap}
+.code{font-family:var(--mono);font-size:10px;color:var(--amber);background:var(--amber-glow);border:1px solid var(--amber-dim);border-radius:4px;padding:1px 6px}
+.cat{font-size:11px;color:var(--t3)}
+.stk{font-family:var(--mono);font-size:10px}
+.stk.ok{color:var(--green)}.stk.low{color:#f97316}.stk.zero{color:var(--red)}
+.used{font-size:9px;font-family:var(--mono);color:#f97316;border:1px solid rgba(249,115,22,.4);border-radius:4px;padding:1px 4px}
+.chev{color:var(--t3);font-size:18px;flex-shrink:0}
+.empty{text-align:center;color:var(--t3);padding:30px 10px;font-size:13px}
+.more{margin-top:8px}
+
+/* Detalle */
+.prod-head{display:flex;gap:12px;align-items:flex-start;margin-bottom:16px}
+.prod-head .em{font-size:34px;width:52px;height:52px;border-radius:12px;background:var(--amber-glow);border:1px solid var(--amber-dim);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.prod-head .nm{font-size:17px;font-weight:700;line-height:1.25;margin:4px 0}
+.fields{display:grid;grid-template-columns:1fr;gap:14px}
+.field select,.field input,.field textarea{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--t1);outline:none}
+.field select:focus,.field input:focus,.field textarea:focus{border-color:var(--amber)}
+.qty{display:flex;align-items:stretch;border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--bg)}
+.qty button{width:60px;border:none;background:var(--card);color:var(--t1);font-size:24px}
+.qty button:active{background:var(--hover);color:var(--amber)}
+.qty input{flex:1;min-width:0;text-align:center;border:none;background:none;color:var(--t1);font-family:var(--mono);font-size:22px;font-weight:600;padding:12px 0;outline:none}
+.tallas{display:flex;flex-wrap:wrap;gap:8px}
+.talla{min-width:52px;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--t1);font-family:var(--mono);font-size:13px;font-weight:600}
+.talla.on{border-color:var(--amber);background:var(--amber-glow);color:var(--amber)}
+.talla small{display:block;font-size:9px;font-weight:400;color:var(--t3)}
+
+/* Solicitud */
+.cart-item{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:8px}
+.cart-item .em{font-size:20px}
+.cart-item .info{flex:1;min-width:0}
+.cart-item .nm{font-size:14px;font-weight:500}
+.cart-item .x{font-family:var(--mono);color:var(--amber);font-size:12px;margin-left:4px}
+.cart-item .mt{font-size:11px;color:var(--t3);font-family:var(--mono);margin-top:3px;word-break:break-word}
+.del{width:36px;height:36px;border:none;border-radius:10px;background:var(--red-dim);color:var(--red);font-size:14px;flex-shrink:0}
+.btn-ghost{width:100%;padding:14px;border-radius:12px;border:1px dashed var(--amber-dim);background:none;color:var(--amber);font-weight:600;font-size:14px;margin-top:6px}
+
+/* Credencial */
+.scan-area{border:2px dashed var(--border);border-radius:14px;padding:30px 16px;text-align:center;background:var(--card);width:100%;color:var(--t1)}
+.scan-area:active{border-color:var(--amber);background:var(--amber-glow)}
+.scan-area.ok{border:2px solid var(--green);background:var(--green-dim)}
+.scan-area.bad{border:2px solid var(--red);background:var(--red-dim)}
+.scan-area .ic{font-size:42px;margin-bottom:8px}
+.scan-area strong{display:block;font-size:15px;margin-bottom:4px}
+.scan-area span{font-size:12px;color:var(--t2)}
+.emp{display:none;align-items:center;gap:12px;margin-top:14px}
+.emp.on{display:flex}
+.avatar{width:48px;height:48px;border-radius:50%;background:var(--amber);color:#000;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;flex-shrink:0}
+.emp .nm{font-weight:700;font-size:15px}
+.emp .id{font-family:var(--mono);font-size:11px;color:var(--amber);margin-top:2px}
+.emp .ro{font-size:11px;color:var(--t3)}
+.vfields{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+.vf{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:10px;border:1px solid var(--border);background:var(--bg);font-size:12px}
+.vf.ok{border-color:rgba(34,197,94,.25);background:var(--green-dim)}
+.vf.warn{border-color:rgba(239,68,68,.3);background:var(--red-dim)}
+.vf .k{color:var(--t3);width:70px;flex-shrink:0}
+.vf .v{flex:1;font-family:var(--mono);font-size:12px;word-break:break-word}
+.alert{margin-top:12px;padding:12px;border-radius:10px;font-size:13px;font-weight:500;line-height:1.5;display:none;white-space:pre-line}
+.alert.on{display:block}
+.alert.error{background:var(--red-dim);border:1px solid rgba(239,68,68,.3);color:#fca5a5}
+.alert.warning{background:var(--amber-glow);border:1px solid rgba(245,158,11,.3);color:var(--amber)}
+.alert.ok{background:var(--green-dim);border:1px solid rgba(34,197,94,.25);color:var(--green)}
+
+/* Firma */
+.summary .r{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
+.summary .r:last-child{border-bottom:none}
+.summary .r span:first-child{color:var(--t3)}
+.summary .r span:last-child{text-align:right;font-family:var(--mono);font-size:12px}
+.sig-box{position:relative;margin-top:14px}
+#sigCanvas{width:100%;height:200px;background:#0d1017;border:1px solid var(--border);border-radius:12px;display:block;touch-action:none}
+.sig-hint{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);text-align:center;color:var(--t3);font-size:13px;pointer-events:none}
+.sig-line{position:absolute;left:20px;right:20px;bottom:40px;border-bottom:1px dashed var(--border);pointer-events:none}
+.link-btn{background:none;border:none;color:var(--t2);font-size:13px;padding:10px 0;text-decoration:underline}
+
+/* Barra de acción inferior */
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:60;background:rgba(17,19,24,.96);backdrop-filter:blur(8px);border-top:1px solid var(--border);
+  padding:12px 14px calc(12px + var(--safe-b));display:none}
+.bar.on{display:block}
+.bar-in{max-width:760px;margin:0 auto;display:flex;gap:10px}
+.btn{flex:1;padding:15px;border-radius:12px;font-size:15px;font-weight:700;border:none;display:flex;align-items:center;justify-content:center;gap:8px;min-height:52px}
+.btn-primary{background:var(--amber);color:#000}
+.btn-primary:disabled{opacity:.35}
+.btn-sec{flex:0 0 auto;background:var(--card);border:1px solid var(--border);color:var(--t1);padding:15px 18px}
+
+/* Registro del día */
+.log-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:8px}
+.log-card .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.log-card .ord{font-family:var(--mono);color:var(--amber);font-size:12px;font-weight:600}
+.log-card .hr{font-family:var(--mono);color:var(--t3);font-size:12px}
+.log-card .who{font-weight:600;font-size:14px}
+.log-card .ids{font-family:var(--mono);font-size:11px;color:var(--t3);margin:2px 0 6px}
+.log-card .items{font-size:12px;color:var(--t2);line-height:1.5}
+
+/* Modales */
+.overlay{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center}
+.overlay.on{display:flex}
+.cam{background:var(--panel);width:100%;height:100%;display:flex;flex-direction:column}
+.cam-head{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;padding-top:calc(12px + env(safe-area-inset-top,0px));border-bottom:1px solid var(--border)}
+.cam-view{position:relative;flex:1;background:#000;overflow:hidden}
+#camVideo{width:100%;height:100%;object-fit:cover;display:block}
+.cam-frame{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);width:min(64vw,330px);aspect-ratio:.75;border-radius:14px;box-shadow:0 0 0 9999px rgba(0,0,0,.45)}
+.cam-frame i{position:absolute;width:26px;height:26px;border-color:var(--amber);border-style:solid}
+.cam-frame i:nth-child(1){top:0;left:0;border-width:3px 0 0 3px;border-top-left-radius:14px}
+.cam-frame i:nth-child(2){top:0;right:0;border-width:3px 3px 0 0;border-top-right-radius:14px}
+.cam-frame i:nth-child(3){bottom:0;left:0;border-width:0 0 3px 3px;border-bottom-left-radius:14px}
+.cam-frame i:nth-child(4){bottom:0;right:0;border-width:0 3px 3px 0;border-bottom-right-radius:14px}
+.cam-hint{position:absolute;left:0;right:0;bottom:16px;text-align:center}
+.cam-hint span{background:rgba(0,0,0,.6);color:#fff;font-size:12px;padding:6px 12px;border-radius:20px}
+.cam-noaccess{display:none;flex:1;align-items:center;justify-content:center;text-align:center;padding:30px;color:var(--t2);font-size:14px}
+.cam-actions{padding:14px;padding-bottom:calc(14px + var(--safe-b));display:flex;flex-direction:column;gap:10px}
+.shutter{width:72px;height:72px;border-radius:50%;border:4px solid #fff;background:var(--amber);margin:0 auto;font-size:26px}
+.upload{display:block;text-align:center;font-size:13px;color:var(--t2);padding:10px;border:1px dashed var(--border);border-radius:10px}
+.analyzing{display:none;flex:1;flex-direction:column;align-items:center;justify-content:center;padding:24px;gap:12px;text-align:center}
+.spinner{width:46px;height:46px;border:3px solid var(--border);border-top-color:var(--amber);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.asteps{width:100%;max-width:340px;display:flex;flex-direction:column;gap:4px;text-align:left}
+.astep{font-family:var(--mono);font-size:12px;color:var(--t3);padding:6px 10px;border-radius:6px}
+.astep.active{color:var(--amber);background:var(--amber-glow)}
+.astep.done{color:var(--green);background:var(--green-dim)}
+#capturedPreview{max-width:340px;width:100%;max-height:180px;object-fit:contain;border-radius:10px;border:1px solid var(--border);background:#000}
+.modal{background:var(--panel);border:1px solid var(--border);border-radius:18px;padding:28px 22px;width:calc(100% - 32px);max-width:400px;text-align:center}
+.modal .ic{font-size:52px;margin-bottom:10px}
+.modal h2{font-size:20px;margin-bottom:8px}
+.modal p{font-size:13px;color:var(--t2);line-height:1.6;margin-bottom:16px;white-space:pre-line}
+.modal .oid{font-family:var(--mono);font-size:13px;color:var(--amber);background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px;margin-bottom:18px}
+
+/* ── TABLET / DESKTOP ── */
+@media (min-width:700px){
+  main{padding-top:20px}
+  .fields{grid-template-columns:1fr 1fr}
+  .fields .full{grid-column:1/-1}
+  .cam{width:min(520px,94vw);height:auto;max-height:94vh;border-radius:18px;border:1px solid var(--border);overflow:hidden}
+  .cam-view{flex:none;aspect-ratio:4/3}
+  .cam-frame{width:44%}
+  .brand-name{font-size:13px}
+}
 </style>
 </head>
 <body>
 
-<!-- TOPBAR -->
 <header class="topbar">
+  <div class="brand-icon">✈</div>
   <div class="brand">
-    <div class="brand-icon">✈</div>
-    <div class="brand-text">
-      <span class="brand-name">AS · Ground Handling</span>
-      <span class="brand-sub">Salida de Inventario</span>
-    </div>
+    <div class="brand-name">AS · Ground Handling</div>
+    <div class="brand-sub">Salida de inventario · <span id="clock">--:--</span></div>
   </div>
-  <div class="divider-v"></div>
-  <div class="topbar-right">
-    <div class="conn-badge wait" id="connBadge"><div class="live-dot" style="background:currentColor"></div><span id="connText">CONECTANDO…</span></div>
-    <div class="clock" id="clock">--:--:--</div>
-  </div>
+  <div class="conn" id="conn" title="Conectando…"></div>
+  <button class="icon-btn" onclick="go('log')" title="Entregas de hoy">🕘</button>
+  <button class="icon-btn" onclick="go(cart.length ? 'cart' : 'catalog')" title="Solicitud">🧾<span class="count" id="cartCount">0</span></button>
 </header>
 
-<div class="layout">
-
-  <!-- LEFT: CATÁLOGO + SOLICITUD -->
-  <div class="main-panel">
-
-    <div class="section-label">Catálogo de inventario</div>
-
-    <div class="catalog-box">
-      <div class="catalog-search">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="prodSearch" autocomplete="off"
-               placeholder="Buscar por nombre o código… (ej: filtro P550, FIL-0012, chaleco, 6PK)">
-      </div>
-      <div class="chips" id="catChips"></div>
-      <div class="results-meta" id="resultsMeta"></div>
-      <div class="results-list" id="resultsList"></div>
-    </div>
-
-    <!-- Detalle del producto seleccionado -->
-    <div class="selection-detail" id="selectionDetail">
-      <div class="detail-header">
-        <div class="detail-emoji" id="detailEmoji">📦</div>
-        <div>
-          <div class="detail-code" id="detailCode"></div>
-          <div class="detail-title" id="detailTitle"></div>
-          <div class="detail-sub" id="detailSub"></div>
-        </div>
-      </div>
-      <div class="field-row" id="detailFields"></div>
-      <button class="add-to-cart-btn" onclick="addToCart()">＋ Agregar a la solicitud</button>
-    </div>
-
-    <div class="section-label">Solicitud actual</div>
-    <div class="cart-section" id="cartSection">
-      <div class="cart-empty" id="cartEmpty">
-        <div class="cart-empty-icon">📦</div>
-        Busca un producto por nombre o código y agrégalo a la solicitud
-      </div>
-      <div id="cartItems"></div>
-    </div>
-  </div>
-
-  <!-- RIGHT: FLUJO -->
-  <div class="side-panel">
-    <div class="steps">
-      <div class="step active" id="step1"><div class="step-num">1</div><div class="step-lbl">Productos</div></div>
-      <div class="step" id="step2"><div class="step-num">2</div><div class="step-lbl">Credencial</div></div>
-      <div class="step" id="step3"><div class="step-num">3</div><div class="step-lbl">Firma</div></div>
-    </div>
-
-    <div class="summary-box">
-      <div class="summary-title">📋 Resumen de solicitud</div>
-      <div class="summary-row"><span class="summary-key">Artículos</span><span class="summary-val amber" id="sumItems">0 ítems</span></div>
-      <div class="summary-row"><span class="summary-key">Fecha</span><span class="summary-val" id="sumDate">—</span></div>
-      <div class="summary-row"><span class="summary-key">Hora</span><span class="summary-val" id="sumTime">—</span></div>
-      <div class="summary-row"><span class="summary-key">Empleado</span><span class="summary-val amber" id="sumEmployee">Sin escanear</span></div>
-      <div class="summary-row"><span class="summary-key">Firma</span><span class="summary-val" id="sumSig">Pendiente</span></div>
-    </div>
-
-    <div class="scan-box">
-      <div class="section-label" style="margin-bottom:12px">Escanear credencial</div>
-      <div class="scan-area" id="scanArea" onclick="openCameraModal()">
-        <div class="scan-laser"></div>
-        <div class="scan-icon">🪪</div>
-        <div class="scan-text"><strong>Toca para escanear con cámara</strong>Claude Vision validará la credencial</div>
-      </div>
-      <div class="employee-result" id="employeeResult">
-        <div class="emp-avatar" id="empAvatar">?</div>
-        <div class="emp-info">
-          <div class="emp-name" id="empName">—</div>
-          <div class="emp-id" id="empId">—</div>
-          <div class="emp-role" id="empRole">—</div>
-        </div>
-        <button class="rescan-btn" onclick="resetScan()" title="Volver a escanear">↺</button>
-      </div>
-      <div class="validation-fields" id="validationFields"></div>
-      <div class="scan-alert" id="scanAlert" style="display:none"></div>
-    </div>
-
-    <div class="sig-wrap">
-      <div class="sig-title">✍️ Firma del empleado</div>
-      <canvas id="sigCanvas" width="340" height="120"></canvas>
-      <div class="sig-actions"><button class="sig-clear" onclick="clearSig()">🗑 Borrar firma</button></div>
-    </div>
-
-    <button class="submit-btn" id="submitBtn" onclick="submitOrder()">✅ Confirmar entrega</button>
-  </div>
+<div class="progress" id="progress">
+  <div class="pstep" data-s="1"><div class="pbar"></div><div class="plbl">Producto</div></div>
+  <div class="pstep" data-s="2"><div class="pbar"></div><div class="plbl">Solicitud</div></div>
+  <div class="pstep" data-s="3"><div class="pbar"></div><div class="plbl">Credencial</div></div>
+  <div class="pstep" data-s="4"><div class="pbar"></div><div class="plbl">Firma</div></div>
 </div>
 
-<!-- REGISTRO DE HOY -->
-<div class="log-section">
-  <div class="log-wrap">
-    <div class="section-label">Registro de entregas — hoy</div>
-    <table class="log-table">
-      <thead>
-        <tr><th>Orden</th><th>Hora</th><th>Empleado</th><th>Cédula</th><th>ID Emp.</th><th>Artículos entregados</th><th>Empresa</th><th>Estado</th></tr>
-      </thead>
-      <tbody id="logBody"><tr><td colspan="8" class="log-empty">Cargando…</td></tr></tbody>
-    </table>
-  </div>
-</div>
+<main>
+  <div class="alert error" id="connAlert"></div>
 
-<!-- CAMERA MODAL -->
-<div class="modal-overlay" id="cameraModal">
-  <div class="camera-modal">
-    <div class="camera-header">
-      <div class="camera-title">
-        <span style="font-size:18px">🪪</span>
-        <div>
-          <div style="font-size:14px;font-weight:700;color:var(--text-primary)">Escaneo de Credencial</div>
-          <div style="font-size:11px;color:var(--text-muted)">Powered by Claude Vision AI</div>
+  <!-- 1. CATÁLOGO -->
+  <section class="view" id="v-catalog">
+    <div class="h1">¿Qué se va a entregar?</div>
+    <div class="sub">Busca por nombre o código y toca el producto.</div>
+    <div class="search">
+      <div class="search-in">
+        <span>🔍</span>
+        <input id="prodSearch" type="search" autocomplete="off" enterkeyhint="search"
+               placeholder="Ej: chaleco, filtro P550, FIL-0012">
+        <button class="clear" id="clearSearch" onclick="clearSearch()">✕</button>
+      </div>
+      <div class="chips" id="chips"></div>
+    </div>
+    <div class="meta" id="meta"></div>
+    <div class="results" id="results"></div>
+  </section>
+
+  <!-- 1b. DETALLE -->
+  <section class="view" id="v-detail">
+    <button class="link-btn" onclick="go('catalog')" style="margin-bottom:6px">← Volver al catálogo</button>
+    <div class="card">
+      <div class="prod-head">
+        <div class="em" id="dEmoji">📦</div>
+        <div style="min-width:0">
+          <span class="code" id="dCode"></span>
+          <div class="nm" id="dName"></div>
+          <div class="cat" id="dSub"></div>
         </div>
       </div>
-      <button class="cam-close" onclick="closeCameraModal()">✕</button>
+      <div class="fields" id="dFields"></div>
     </div>
-    <div id="camStateIdle">
-      <div class="cam-preview-wrap">
+  </section>
+
+  <!-- 2. SOLICITUD -->
+  <section class="view" id="v-cart">
+    <div class="h1">Solicitud</div>
+    <div class="sub" id="cartSub">Revisa los artículos. Puedes agregar más antes de continuar.</div>
+    <div id="cartItems"></div>
+    <button class="btn-ghost" onclick="go('catalog')">＋ Agregar otro producto</button>
+  </section>
+
+  <!-- 3. CREDENCIAL -->
+  <section class="view" id="v-scan">
+    <div class="h1">Escanear credencial</div>
+    <div class="sub">Toma una foto del carné del empleado que recibe.</div>
+    <button class="scan-area" id="scanArea" onclick="openCamera()">
+      <div class="ic" id="scanIc">🪪</div>
+      <strong id="scanTitle">Toca para escanear</strong>
+      <span id="scanSub">Claude Vision validará la credencial</span>
+    </button>
+    <div class="emp" id="emp">
+      <div class="avatar" id="empAv">?</div>
+      <div style="min-width:0">
+        <div class="nm" id="empName"></div>
+        <div class="id" id="empId"></div>
+        <div class="ro" id="empRole"></div>
+      </div>
+    </div>
+    <div class="vfields" id="vfields"></div>
+    <div class="alert" id="scanAlert"></div>
+  </section>
+
+  <!-- 4. FIRMA -->
+  <section class="view" id="v-sign">
+    <div class="h1">Firma del empleado</div>
+    <div class="sub">Confirma que recibe los artículos listados.</div>
+    <div class="card summary" id="summary"></div>
+    <div class="sig-box">
+      <canvas id="sigCanvas"></canvas>
+      <div class="sig-line"></div>
+      <div class="sig-hint" id="sigHint">Firme aquí con el dedo</div>
+    </div>
+    <button class="link-btn" onclick="clearSig()">Borrar firma</button>
+  </section>
+
+  <!-- REGISTRO -->
+  <section class="view" id="v-log">
+    <button class="link-btn" onclick="goBack()" style="margin-bottom:6px">← Volver</button>
+    <div class="h1">Entregas de hoy</div>
+    <div class="sub" id="logSub"></div>
+    <div id="logList"></div>
+  </section>
+</main>
+
+<!-- BARRA DE ACCIÓN -->
+<div class="bar" id="bar"><div class="bar-in" id="barIn"></div></div>
+
+<!-- CÁMARA -->
+<div class="overlay" id="camModal">
+  <div class="cam">
+    <div class="cam-head">
+      <div><div style="font-weight:700">Escaneo de credencial</div><div style="font-size:11px;color:var(--t3)">Claude Vision AI</div></div>
+      <button class="icon-btn" onclick="closeCamera()">✕</button>
+    </div>
+    <div id="camIdle" style="display:flex;flex-direction:column;flex:1;min-height:0">
+      <div class="cam-view" id="camView">
         <video id="camVideo" autoplay playsinline muted></video>
-        <div class="cam-overlay">
-          <div class="cam-frame" style="aspect-ratio:0.75;width:52%">
-            <span class="corner tl"></span><span class="corner tr"></span>
-            <span class="corner bl"></span><span class="corner br"></span>
-          </div>
-          <div class="cam-hint">Centra la credencial dentro del marco</div>
-        </div>
-        <canvas id="camCanvas" style="display:none"></canvas>
+        <div class="cam-frame"><i></i><i></i><i></i><i></i></div>
+        <div class="cam-hint"><span>Centra la credencial dentro del marco</span></div>
       </div>
+      <div class="cam-noaccess" id="camNo">📷 No se pudo abrir la cámara.<br>Sube una foto de la credencial.</div>
       <div class="cam-actions">
-        <button class="cam-btn-secondary" onclick="closeCameraModal()">Cancelar</button>
-        <button class="cam-btn-primary" id="captureBtn" onclick="capturePhoto()">📸 Capturar</button>
-      </div>
-      <div style="text-align:center;margin:10px 0 16px">
-        <label class="upload-label">
-          <input type="file" id="fileUpload" accept="image/*" onchange="handleFileUpload(this)" style="display:none">
-          📁 O sube una imagen desde el dispositivo
+        <button class="shutter" id="shutter" onclick="capturePhoto()">📸</button>
+        <label class="upload">
+          <input type="file" id="fileUpload" accept="image/*" capture="environment" onchange="handleFile(this)" hidden>
+          📁 Subir foto desde el dispositivo
         </label>
       </div>
     </div>
-    <div id="camStateAnalyzing" style="display:none">
-      <div class="analyzing-wrap">
-        <div class="analyzing-spinner"></div>
-        <div class="analyzing-title">Analizando credencial…</div>
-        <div class="analyzing-sub">Claude Vision está leyendo los campos</div>
-        <div class="analyze-steps">
-          <div class="astep" id="as1">— Subiendo foto a Drive…</div>
-          <div class="astep" id="as2">— Extrayendo datos del carné…</div>
-          <div class="astep" id="as3">— Verificando empresa autorizada…</div>
-          <div class="astep" id="as4">— Validando fecha de expiración…</div>
-        </div>
-        <img id="capturedPreview" style="width:100%;border-radius:8px;margin-top:16px;border:1px solid var(--border);max-height:160px;object-fit:contain;background:#000">
+    <div class="analyzing" id="camBusy">
+      <div class="spinner"></div>
+      <div style="font-weight:700">Analizando credencial…</div>
+      <div class="asteps">
+        <div class="astep" id="as1"></div><div class="astep" id="as2"></div>
+        <div class="astep" id="as3"></div><div class="astep" id="as4"></div>
       </div>
+      <img id="capturedPreview" alt="">
     </div>
   </div>
 </div>
 
-<!-- SUCCESS MODAL -->
-<div class="modal-overlay" id="modalOverlay">
+<!-- ÉXITO -->
+<div class="overlay" id="okModal">
   <div class="modal">
-    <div class="modal-icon">✅</div>
-    <div class="modal-title">¡Entrega confirmada!</div>
-    <div class="modal-sub" id="modalSub">La entrega ha sido registrada correctamente.</div>
-    <div class="modal-id" id="modalOrderId">—</div>
-    <button class="modal-close" onclick="closeModal()">Nueva solicitud</button>
+    <div class="ic">✅</div>
+    <h2>¡Entrega confirmada!</h2>
+    <p id="okText"></p>
+    <div class="oid" id="okId"></div>
+    <button class="btn btn-primary" style="width:100%" onclick="newRequest()">Nueva solicitud</button>
   </div>
 </div>
 
 <script>
 // ═══════════════════════════════════════════════════════════════
-//  CONFIGURACIÓN — pega aquí la URL /exec del Web App de Apps Script
+//  CONFIGURACIÓN — URL /exec del Web App de Apps Script
 // ═══════════════════════════════════════════════════════════════
 const GAS_URL   = 'https://script.google.com/macros/s/AKfycbxogZcdsM4hpNjCBoHWq0I5ECWDkNs5TAkqdRoRjGqkblUzvzyo8ABCbBTRFw2MUevJQA/exec';
-const APP_TOKEN = '';   // opcional: mismo valor que la propiedad APP_TOKEN del script
+const APP_TOKEN = '';   // opcional: igual a la propiedad APP_TOKEN del script
 
-// ─── CATÁLOGO EMBEBIDO [código, artículo, categoría, unidad] ───
-// Se usa si el Apps Script no responde o la hoja "Catalogo" está vacía.
+// Catálogo embebido [código, artículo, categoría, unidad] (respaldo si el servidor no responde)
 const CATALOGO_BASE = [["LIM-0001","ABRILLANTADOR MULTIUSO TIPO NAIZ","Limpieza y consumibles","Unidad"],["LIM-0002","ABSORBENTE P/ DERRAMES","Limpieza y consumibles","Unidad"],["LUB-0001","ACEITE 10W30 GALON","Lubricantes y fluidos","Galón"],["LUB-0002","ACEITE 15W40 GALON-ESTAÑON","Lubricantes y fluidos","Galón"],["LUB-0003","ACEITE 20W50 GALON","Lubricantes y fluidos","Galón"],["LUB-0004","ACEITE 25W50 ESTAÑON/GALON","Lubricantes y fluidos","Galón"],["LUB-0005","ACEITE 25W60 LITRO","Lubricantes y fluidos","Litro"],["LUB-0006","ACEITE 5W30 CUARTO","Lubricantes y fluidos","Cuarto"],["LUB-0007","ACEITE 5W-30 GALON","Lubricantes y fluidos","Galón"],["LUB-0008","ACEITE 75W20 CUEBTA USADA","Lubricantes y fluidos","Cubeta"],["LUB-0009","ACEITE 75W90 CUARTO","Lubricantes y fluidos","Cuarto"],["LUB-0010","ACEITE 80W90 CUBETA USADA","Lubricantes y fluidos","Cubeta"],["LUB-0011","ACEITE 80W90 GALON-ESTAÑON","Lubricantes y fluidos","Galón"],["LUB-0012","ACEITE 85W140 CUBETA USADA","Lubricantes y fluidos","Cubeta"],["LUB-0013","ACEITE 85W90 CUBETA USADA","Lubricantes y fluidos","Cubeta"],["LUB-0014","ACEITE ATF CUBETA USADA","Lubricantes y fluidos","Cubeta"],["LUB-0015","ACEITE HERRAMIENTA NEUMATICO","Lubricantes y fluidos","Unidad"],["LUB-0016","ACEITE HIDRAULICO 68 GALON","Lubricantes y fluidos","Galón"],["LUB-0017","ACEITE MEROPA 220 CUBETA","Lubricantes y fluidos","Cubeta"],["LUB-0018","ACEITE P/ COMPRESOR 473 ML","Lubricantes y fluidos","Unidad"],["LUB-0019","ACEITE P/ HERRAMIENTAS USADA","Lubricantes y fluidos","Unidad"],["LUB-0020","ACEITE REGAL CUBETA R100 USADA","Lubricantes y fluidos","Cubeta"],["LUB-0021","ACEITE SAE30 LITRO GALON","Lubricantes y fluidos","Galón"],["LUB-0022","ACEITE TRANSMISION ATF","Lubricantes y fluidos","Unidad"],["TOR-0001","ACOPLE 1/2\" E100","Tornillería y acoples","Unidad"],["TOR-0002","ACOPLE 1/4\" E97","Tornillería y acoples","Unidad"],["TOR-0003","ACOPLE 3MMX38MM","Tornillería y acoples","Unidad"],["TOR-0004","ACOPLE 3MMX7MM E139","Tornillería y acoples","Unidad"],["TOR-0005","ACOPLE 5/16\" E101","Tornillería y acoples","Unidad"],["TOR-0006","ACOPLE 7/16\" E99","Tornillería y acoples","Unidad"],["TOR-0007","ACOPLE CONO BRONCE 3/8\" E90","Tornillería y acoples","Unidad"],["TOR-0008","ACOPLE CONO BRONCE E92","Tornillería y acoples","Unidad"],["TOR-0009","ACOPLE DE BRONCE E91","Tornillería y acoples","Unidad"],["TOR-0010","ACOPLE DE BRONCE P/ MANGUERA 3/4\" E44","Tornillería y acoples","Unidad"],["TOR-0011","ACOPLE MANGUERA HIDRAULICA 5/8\" E45","Tornillería y acoples","Unidad"],["TOR-0012","ACOPLE RAPIDO","Tornillería y acoples","Unidad"],["LUB-0023","ADBLUE PICHINGA","Lubricantes y fluidos","Pichinga"],["LUB-0024","ADITIVO HIDRO PIÑON","Lubricantes y fluidos","Unidad"],["LUB-0025","AGUA DESIONIZADA P/ BATERIA","Lubricantes y fluidos","Unidad"],["LIM-0003","AGUA EMBOTELLADA ALPINA 355 ML","Limpieza y consumibles","Unidad"],["ELE-0001","ALARMA MARCHA ATRÁS 12V","Eléctrico","Unidad"],["LIM-0004","ALCOHOL GEL GALON","Limpieza y consumibles","Galón"],["LIM-0005","ALCOHOL LIQUIDO GALON","Limpieza y consumibles","Galón"],["TOR-0013","ALEMITE EN L 1/2\" E16","Tornillería y acoples","Unidad"],["TOR-0014","ALEMITE EN L 1/4\" E16","Tornillería y acoples","Unidad"],["TOR-0015","ALEMITE EN L 5/16\" E16","Tornillería y acoples","Unidad"],["LIM-0006","ALUMINOL","Limpieza y consumibles","Unidad"],["ELE-0002","AMPERIMETRO","Eléctrico","Unidad"],["TOR-0016","ARANDELA DE 10MM E52","Tornillería y acoples","Unidad"],["TOR-0017","ARANDELA DE 11/16\"","Tornillería y acoples","Unidad"],["TOR-0018","ARANDELA DE 11MM E53","Tornillería y acoples","Unidad"],["TOR-0019","ARANDELA E148","Tornillería y acoples","Unidad"],["TOR-0020","ARANDELA E149","Tornillería y acoples","Unidad"],["TOR-0021","ARANDELA E150","Tornillería y acoples","Unidad"],["TOR-0022","ARANDELA E154","Tornillería y acoples","Unidad"],["TOR-0023","ARANDELA E155","Tornillería y acoples","Unidad"],["TOR-0024","ARANDELA E156","Tornillería y acoples","Unidad"],["TOR-0025","ARANDELA E157","Tornillería y acoples","Unidad"],["TOR-0026","ARANDELA E158","Tornillería y acoples","Unidad"],["TOR-0027","ARANDELA E159","Tornillería y acoples","Unidad"],["REP-0001","ARRANCADOR MANUAL P/ MOTOR (TOILET)","Repuestos y varios","Unidad"],["REP-0002","ASBESTO P/ EMPAQUE","Repuestos y varios","Unidad"],["HER-0001","ASPIRADORAS","Herramientas","Unidad"],["ELE-0003","AUTOMATICO","Eléctrico","Unidad"],["ELE-0004","AUTOMATICO 12V","Eléctrico","Unidad"],["ELE-0005","AUTOMATICO 40 MT P/ ARRANCADOR","Eléctrico","Unidad"],["ELE-0006","AUTOMATICO LOADER FM15G3","Eléctrico","Unidad"],["ELE-0007","AUTOMATICO P/ COMPRESOR","Eléctrico","Unidad"],["ELE-0008","BALA ARRANCADOR","Eléctrico","Unidad"],["ELE-0009","BALA ARRANCADOR #66-82600","Eléctrico","Unidad"],["FAJ-0001","BANDA P/ FAJAS","Fajas","Unidad"],["REP-0003","BASTON LUMINOSO WANDS","Repuestos y varios","Unidad"],["ELE-0010","BATEIRIA N70","Eléctrico","Unidad"],["ELE-0011","BATERIA 31HD-MF","Eléctrico","Unidad"],["ELE-0012","BATERIA N150","Eléctrico","Unidad"],["ELE-0013","BATERIA N70 USADA","Eléctrico","Unidad"],["ELE-0014","BATERIA N70Z","Eléctrico","Unidad"],["ELE-0015","BEACOM MULA ELECTRICA","Eléctrico","Unidad"],["ELE-0016","BEACOM MULAS ELECTRICAS","Eléctrico","Unidad"],["ELE-0017","BENDIX","Eléctrico","Unidad"],["ELE-0018","BENDIX 10D","Eléctrico","Unidad"],["ELE-0019","BENDIX 11D","Eléctrico","Unidad"],["ELE-0020","BENDIX 12D","Eléctrico","Unidad"],["ELE-0021","BENDIX 28 MT 40MM 10D MARCA BUIT","Eléctrico","Unidad"],["ELE-0022","BENDIX 28 MT 40MM 10D MARCA ZEN","Eléctrico","Unidad"],["ELE-0023","BENDIX 28MT 10D","Eléctrico","Unidad"],["ELE-0024","BENDIX 28MT 39,5MM 10D","Eléctrico","Unidad"],["ELE-0025","BENDIX GRANDE 10 DIENTES","Eléctrico","Unidad"],["TOR-0028","BISAGRA SOLDABLE 4-1/2 PAR","Tornillería y acoples","Par"],["PAP-0001","BLOCK -INFORME DIARIO OPERACIONES","Papelería","Block"],["PAP-0002","BLOCK -LISTA DE CHEQUEO RAMPA","Papelería","Block"],["PAP-0003","BLOCK -ORDENES DE COMPRA AS","Papelería","Block"],["PAP-0004","BLOCK -REPORTE AVERIA EQUIPO","Papelería","Block"],["PAP-0005","BLOCK -SALIDA MATERIALES AEROJET","Papelería","Block"],["PAP-0006","BLOCK -SALIDA MATERIALES AS","Papelería","Block"],["PAP-0007","BLOCK -SEGUIMIENTO TRABAJO","Papelería","Block"],["PAP-0008","BLOCK -SOLICITUD DE REPARACION Y SALIDAS","Papelería","Block"],["ELE-0026","BOBINAS","Eléctrico","Unidad"],["LIM-0007","BOLSA C/ QUIMICOS P/ FUMIGAR","Limpieza y consumibles","Caja"],["REP-0004","BOLSA CON CABLES VARIOS","Repuestos y varios","Caja"],["REP-0005","BOLSA CON EMPAQUES VARIOS","Repuestos y varios","Caja"],["REP-0006","BOLSA CON MANGUERA VARIAS 01","Repuestos y varios","Caja"],["REP-0007","BOLSA CON MANGUERA VARIAS 02","Repuestos y varios","Caja"],["LIM-0008","BOLSA P/ BASURA GRANDE ROLLO 20 B","Limpieza y consumibles","Rollo"],["LIM-0009","BOLSA P/ BASURA GRANDE ROLLO 25 B","Limpieza y consumibles","Rollo"],["LIM-0010","BOLSA P/ BASURA JARDIN ROLLO 50 B","Limpieza y consumibles","Rollo"],["LIM-0011","BOLSA P/ BASURA PEQUEÑO ROLLO 100 B","Limpieza y consumibles","Rollo"],["LIM-0012","BOLSA P/ BASURA PEQUEÑO ROLLO 50 B","Limpieza y consumibles","Rollo"],["ELE-0027","BOLSA SURTIDA C/ LUCES DIFERENTES COLORES","Eléctrico","Caja"],["REP-0008","BOMBA AUXILIAR FRENOS (E3)","Repuestos y varios","Unidad"],["REP-0009","BOMBA COMBUSTIBLE #227-007","Repuestos y varios","Unidad"],["REP-0010","BOMBA DE TRASIEGO","Repuestos y varios","Unidad"],["REP-0011","BOMBA INYECCION JHON DEERE USADO","Repuestos y varios","Unidad"],["REP-0012","BOMBA INYECCION S/M","Repuestos y varios","Unidad"],["REP-0013","BOMBA PRESION HIDRAULICA USADO","Repuestos y varios","Unidad"],["REP-0014","BOMBA TRASIEGO","Repuestos y varios","Unidad"],["REP-0015","BOMBA TRASIEGO MECANICA PERKINS","Repuestos y varios","Unidad"],["ELE-0028","BOMBILLLO 2C 12V PEQUEÑO","Eléctrico","Unidad"],["ELE-0029","BOMBILLO 1C 12V GRANDE","Eléctrico","Unidad"],["ELE-0030","BOMBILLO 1C 12V PEQUEÑO","Eléctrico","Unidad"],["ELE-0031","BOMBILLO 1C 24V MEDIANO","Eléctrico","Unidad"],["ELE-0032","BOMBILLO 1F 24V GRANDE","Eléctrico","Unidad"],["ELE-0033","BOMBILLO 1F 24V MEDIANO","Eléctrico","Unidad"],["ELE-0034","BOMBILLO 1F 24V PEQUEÑO","Eléctrico","Unidad"],["ELE-0035","BOMBILLO 2C 12V GRANDE","Eléctrico","Unidad"],["ELE-0036","BOMBILLO 2F 24V GRANDE","Eléctrico","Unidad"],["ELE-0037","BOMBILLO DASH 12V","Eléctrico","Unidad"],["ELE-0038","BOMBILLO P/ LUZ TECHO","Eléctrico","Unidad"],["ELE-0039","BOMBILLO PESCADO 12V GRANDE","Eléctrico","Unidad"],["ELE-0040","BOMBILLO PESCADO 24V #2845","Eléctrico","Unidad"],["ELE-0041","BOTON ARRANQUE C/ FORRO 12V","Eléctrico","Unidad"],["ELE-0042","BOTON PARA EMERGENCIA","Eléctrico","Unidad"],["ELE-0043","BOTON PARO EMERGENCIAS","Eléctrico","Unidad"],["ELE-0044","BOTON ROJO","Eléctrico","Unidad"],["ELE-0045","BOTON VERDE","Eléctrico","Unidad"],["ELE-0046","BOTON VERDE P/ FAJA","Eléctrico","Unidad"],["ELE-0047","BOTONROJO P/ FAJA","Eléctrico","Unidad"],["HER-0002","BROCA 1/16\"","Herramientas","Unidad"],["HER-0003","BROCA 1/4\"","Herramientas","Unidad"],["HER-0004","BROCA 1/8\"","Herramientas","Unidad"],["HER-0005","BROCA 13/16\"","Herramientas","Unidad"],["HER-0006","BROCA 1X1/2\"","Herramientas","Unidad"],["HER-0007","BROCA 3/16\"","Herramientas","Unidad"],["HER-0008","BROCA 3/8\"","Herramientas","Unidad"],["HER-0009","BROCA 5/16\"","Herramientas","Unidad"],["HER-0010","BROCA 5/8\"","Herramientas","Unidad"],["HER-0011","BROCA 7/16\"","Herramientas","Unidad"],["HER-0012","BROCA1/2\"","Herramientas","Unidad"],["HER-0013","BROCHA 1\"","Herramientas","Unidad"],["HER-0014","BROCHA 1/2\"","Herramientas","Unidad"],["HER-0015","BROCHA 1-1/2\"","Herramientas","Unidad"],["HER-0016","BROCHA 2\"","Herramientas","Unidad"],["HER-0017","BROCHA 2-1/2\"","Herramientas","Unidad"],["HER-0018","BROCHA 3\"","Herramientas","Unidad"],["HER-0019","BROCHA 4\"","Herramientas","Unidad"],["REP-0016","BULBO ACEITE #50-186-2","Repuestos y varios","Unidad"],["REP-0017","BULBO FRENO","Repuestos y varios","Unidad"],["REP-0018","BULBO FRENO KN30/GS-N1","Repuestos y varios","Unidad"],["REP-0019","BULBO P/ MONTACARGAS","Repuestos y varios","Unidad"],["ELE-0048","CABLES P/ PUENTEAR LAGARTOS","Eléctrico","Unidad"],["ELE-0049","CAJA C/ BOMBILLOS SURTIDO","Eléctrico","Caja"],["REP-0020","CAJA C/ RETENEDORES VARIOS","Repuestos y varios","Caja"],["REP-0021","CAJA CABLE UTP P/ CAMARAS USADA","Repuestos y varios","Caja"],["REP-0022","CAJA CON RESORTES WÜRTH","Repuestos y varios","Caja"],["HER-0020","CAJA CUBO Y ALLEN 1/2\" 16 PZ (MOVILES)","Herramientas","Caja"],["HER-0021","CAJA CUBOS FORCE 1/2\" 22 PZ","Herramientas","Caja"],["HER-0022","CAJA CUBOS FORCE 1/2\" 24 PZ","Herramientas","Caja"],["HER-0023","CAJA CUBOS IMPACTO FORCE 8 PZ","Herramientas","Caja"],["HER-0024","CAJA CUBOS TORX 1/2\" 9PZ","Herramientas","Caja"],["REP-0023","CAJA DE RETENEDORES VARIOS","Repuestos y varios","Caja"],["HER-0025","CAJA DESATORNILLADORES FORCE 8 PZ","Herramientas","Caja"],["REP-0024","CAJA EMPAQUES VARIOS P/ LOADER","Repuestos y varios","Caja"],["TOR-0029","CAJA GAZAS VARIAS","Tornillería y acoples","Caja"],["REP-0025","CAJA NEGRA INSUMOS P/ CURSOS, REU, CUMPLE.","Repuestos y varios","Caja"],["REP-0026","CAJA O-RINGS WÜRTH","Repuestos y varios","Caja"],["REP-0027","CAJA REPUESTOS VARIOS USADOS","Repuestos y varios","Caja"],["HER-0026","CAJA SACA BOCADOS","Herramientas","Caja"],["HER-0027","CAJA SACA TACOS","Herramientas","Caja"],["ELE-0050","CAJA TERMINALES ELECTRICAS","Eléctrico","Caja"],["CAL-0001","CALCOAMINIA E1","Calcomanías","Unidad"],["CAL-0002","CALCOMANIA \"PELIGRO ALTO VOLTAJE\"","Calcomanías","Unidad"],["CAL-0003","CALCOMANIA \"COLOQUE CALZAS\"","Calcomanías","Unidad"],["CAL-0004","CALCOMANIA \"FRENO ESTACIONAMIENTO\"","Calcomanías","Unidad"],["CAL-0005","CALCOMANIA \"NO RELLENAR\"","Calcomanías","Unidad"],["CAL-0006","CALCOMANIA \"PARO EMERGENCIA\"","Calcomanías","Unidad"],["CAL-0007","CALCOMANIA \"REVISE SU EQUIPO\"","Calcomanías","Unidad"],["CAL-0008","CALCOMANIA \"UD ES RESPONSABLE\"","Calcomanías","Unidad"],["CAL-0009","CALCOMANIA 250 KGS","Calcomanías","Unidad"],["CAL-0010","CALCOMANIA 33","Calcomanías","Unidad"],["CAL-0011","CALCOMANIA 35","Calcomanías","Unidad"],["CAL-0012","CALCOMANIA 4000 LBS","Calcomanías","Unidad"],["CAL-0013","CALCOMANIA 6000 LBS","Calcomanías","Unidad"],["CAL-0014","CALCOMANIA ABS","Calcomanías","Unidad"],["CAL-0015","CALCOMANIA AEROJET 21X8","Calcomanías","Unidad"],["CAL-0016","CALCOMANIA ALTO VOLTAJE","Calcomanías","Unidad"],["CAL-0017","CALCOMANIA BANDERA 15X15","Calcomanías","Unidad"],["CAL-0018","CALCOMANIA BANDERA 24X24","Calcomanías","Unidad"],["CAL-0019","CALCOMANIA BANDERA 30X30","Calcomanías","Unidad"],["CAL-0020","CALCOMANIA CARGA ANCHA","Calcomanías","Unidad"],["CAL-0021","CALCOMANIA CUADRO NUMEROS","Calcomanías","Unidad"],["CAL-0022","CALCOMANIA DESECHOS BIOINFECCIOSOS","Calcomanías","Unidad"],["CAL-0023","CALCOMANIA DIESEL","Calcomanías","Unidad"],["CAL-0024","CALCOMANIA GASOLINA","Calcomanías","Unidad"],["CAL-0025","CALCOMANIA LIQUIDO INFLAMABLE","Calcomanías","Unidad"],["CAL-0026","CALCOMANIA LOGO AEROJET 17X6","Calcomanías","Unidad"],["CAL-0027","CALCOMANIA LOGO AEROJET 23X12","Calcomanías","Unidad"],["CAL-0028","CALCOMANIA LOGO AEROJET 25X13","Calcomanías","Unidad"],["CAL-0029","CALCOMANIA LOGO AEROJET 35X15","Calcomanías","Unidad"],["CAL-0030","CALCOMANIA LOGO AEROJET 65X25","Calcomanías","Unidad"],["CAL-0031","CALCOMANIA LOGO AEROJET 65X27","Calcomanías","Unidad"],["CAL-0032","CALCOMANIA LOGO AEROJET ELECTRICO 25x10","Calcomanías","Unidad"],["CAL-0033","CALCOMANIA LOGO AEROJET ELECTRICO 35X15","Calcomanías","Unidad"],["CAL-0034","CALCOMANIA LOGO AEROJET ELECTRICO 53x20","Calcomanías","Unidad"],["CAL-0035","CALCOMANIA LOGO AEROJET ELECTRICO 65X27","Calcomanías","Unidad"],["CAL-0036","CALCOMANIA LOGO AEROJET ELECTRICO 70X27","Calcomanías","Unidad"],["CAL-0037","CALCOMANIA LOGO AS 25X10","Calcomanías","Unidad"],["CAL-0038","CALCOMANIA LOGO AS 35X15","Calcomanías","Unidad"],["CAL-0039","CALCOMANIA LOGO AS 50X20","Calcomanías","Unidad"],["CAL-0040","CALCOMANIA LOGO AS 65X27","Calcomanías","Unidad"],["CAL-0041","CALCOMANIA LOGO AS 75X66","Calcomanías","Unidad"],["CAL-0042","CALCOMANIA MARCHA ATRÁS","Calcomanías","Unidad"],["CAL-0043","CALCOMANIA PROHIBIDO FUMAR","Calcomanías","Unidad"],["LIM-0013","CALDERA PARA LAVAR","Limpieza y consumibles","Unidad"],["HER-0028","CALZA HULE GRANDE","Herramientas","Unidad"],["UNI-0001","CAMISA M/C AZUL AS T. 2XL","Uniformes","Unidad"],["UNI-0002","CAMISA M/C AZUL AS T. L","Uniformes","Unidad"],["UNI-0003","CAMISA M/C AZUL AS T. M","Uniformes","Unidad"],["UNI-0004","CAMISA M/C AZUL AS T. S","Uniformes","Unidad"],["UNI-0005","CAMISA M/C AZUL AS T. XL","Uniformes","Unidad"],["UNI-0006","CAMISA M/C AZUL T. 4XL","Uniformes","Unidad"],["UNI-0007","CAMISA M/C GRIS T. 2XL","Uniformes","Unidad"],["UNI-0008","CAMISA M/C GRIS T. 3XL","Uniformes","Unidad"],["UNI-0009","CAMISA M/C GRIS T. 4XL","Uniformes","Unidad"],["UNI-0010","CAMISA M/C GRIS T. L","Uniformes","Unidad"],["UNI-0011","CAMISA M/C GRIS T. M","Uniformes","Unidad"],["UNI-0012","CAMISA M/C GRIS T. S","Uniformes","Unidad"],["UNI-0013","CAMISA M/C GRIS T. XL","Uniformes","Unidad"],["UNI-0014","CAMISA M/C ROJA T. L","Uniformes","Unidad"],["UNI-0015","CAMISA M/C ROJA T. M","Uniformes","Unidad"],["UNI-0016","CAMISA M/C ROJA T. S","Uniformes","Unidad"],["UNI-0017","CAMISA M/C ROJA T. XL","Uniformes","Unidad"],["UNI-0018","CAMISA M/L RAMPA AEROJET T. 2XL","Uniformes","Unidad"],["UNI-0019","CAMISA M/L RAMPA AEROJET T. 3XL","Uniformes","Unidad"],["UNI-0020","CAMISA M/L RAMPA AEROJET T. 4XL","Uniformes","Unidad"],["UNI-0021","CAMISA M/L RAMPA AEROJET T. L","Uniformes","Unidad"],["UNI-0022","CAMISA M/L RAMPA AEROJET T. M","Uniformes","Unidad"],["UNI-0023","CAMISA M/L RAMPA AEROJET T. S","Uniformes","Unidad"],["UNI-0024","CAMISA M/L RAMPA AEROJET T. XL","Uniformes","Unidad"],["UNI-0025","CAMISA M/L RAMPA AS T. 2XL","Uniformes","Unidad"],["UNI-0026","CAMISA M/L RAMPA AS T. 3XL","Uniformes","Unidad"],["UNI-0027","CAMISA M/L RAMPA AS T. 4XL","Uniformes","Unidad"],["UNI-0028","CAMISA M/L RAMPA AS T. L","Uniformes","Unidad"],["UNI-0029","CAMISA M/L RAMPA AS T. S","Uniformes","Unidad"],["UNI-0030","CAMISA M/L RAMPA AS T. XL","Uniformes","Unidad"],["UNI-0031","CAMISA M/L RAMPA AS T. XS","Uniformes","Unidad"],["UNI-0032","CAMISA M/L RAMPA AST. M","Uniformes","Unidad"],["LIM-0014","CANASTA P/ LAVAR MOVILES","Limpieza y consumibles","Unidad"],["UNI-0033","CAPA AMARILLA 2 PZ T. 2XL","Uniformes","Juego"],["UNI-0034","CAPA AMARILLA 2 PZ T. 3XL","Uniformes","Juego"],["UNI-0035","CAPA AMARILLA 2 PZ T. 4XL","Uniformes","Juego"],["UNI-0036","CAPA AMARILLA 2 PZ T. L","Uniformes","Juego"],["UNI-0037","CAPA AMARILLA 2 PZ T. M","Uniformes","Juego"],["UNI-0038","CAPA AMARILLA 2 PZ T. XL","Uniformes","Juego"],["ELE-0051","CARCASA COMPLETA ALTERNADOR","Eléctrico","Unidad"],["ELE-0052","CARCASA COMPLETA ARRANCADOR","Eléctrico","Unidad"],["HER-0029","CARDA DE COPA 1 3/4\"","Herramientas","Unidad"],["HER-0030","CARDA DE COPA 2 3/4\"","Herramientas","Unidad"],["HER-0031","CARDA DE COPA 1\"","Herramientas","Unidad"],["EPP-0001","CARETA CON ESPUMA","EPP","Unidad"],["ELE-0053","CARGADOR PARA BATERIA","Eléctrico","Unidad"],["TOR-0030","CARRITO P/ PORTON 4-1/2\"","Tornillería y acoples","Unidad"],["HER-0032","CARRUCHA MANGUERA RIGIDA","Herramientas","Unidad"],["EPP-0002","CASCO SEGURIDAD AMARILLO","EPP","Unidad"],["EPP-0003","CASCO SEGURIDAD ROJO","EPP","Unidad"],["LIM-0015","CERA MEGUIARS USADA","Limpieza y consumibles","Unidad"],["EPP-0004","CHALECO AERO LIMON UNITALLA","EPP","Unidad"],["EPP-0005","CHALECO AEROJET NARANJA UNITALLA","EPP","Unidad"],["EPP-0006","CHALECO AS LIMON T. L","EPP","Unidad"],["EPP-0007","CHALECO AS LIMON T. M","EPP","Unidad"],["EPP-0008","CHALECO AS LIMON T. XL","EPP","Unidad"],["EPP-0009","CHALECO AS LIMON UNITALLA","EPP","Unidad"],["EPP-0010","CHALECO AS NARANJA UNITALLA","EPP","Unidad"],["EPP-0011","CHALECO LIMON T. 2XL","EPP","Unidad"],["EPP-0012","CHALECO LIMON T. L","EPP","Unidad"],["EPP-0013","CHALECO LIMON T. XL","EPP","Unidad"],["EPP-0014","CHALECO LIMON T.M","EPP","Unidad"],["EPP-0015","CHALECO NARANJA T. L","EPP","Unidad"],["REP-0028","CIGÜEÑAL 6 CILINDROS USADO","Repuestos y varios","Unidad"],["REP-0029","CILINDRO GAS BUTANO","Repuestos y varios","Unidad"],["REP-0030","CILINDRO LINER-PER FIT #EM1267","Repuestos y varios","Unidad"],["PIN-0001","CINTA ADHESIVA EN ROLLO FOSFORENCENTE","Pinturas y adhesivos","Rollo"],["ELE-0054","CINTA AISLANTE AUTOFUNDENTE","Eléctrico","Unidad"],["PIN-0002","CINTA ANTIDESLIZANTE BICOLOR","Pinturas y adhesivos","Unidad"],["PIN-0003","CINTA ANTIDESLIZANTE NEGRA","Pinturas y adhesivos","Unidad"],["PIN-0004","CINTA PLASTICA PELIGRO EN USO","Pinturas y adhesivos","Unidad"],["PIN-0005","CINTA REFLECTIVA BLCO/ROJO","Pinturas y adhesivos","Unidad"],["EPP-0016","CINTURON SEGURIDAD 2 PUNTOS","EPP","Unidad"],["EPP-0017","CINTURON SEGURIDAD 2 PUNTOS INCOMPLETO","EPP","Unidad"],["TOR-0031","CLAVOS 2\" C/ CABEZA PAQ. 500G","Tornillería y acoples","Paquete"],["REP-0031","COASTER P/ DOLLIES","Repuestos y varios","Unidad"],["TOR-0032","CODO A 90° E102","Tornillería y acoples","Unidad"],["TOR-0033","CODO DE 1/4\" E48","Tornillería y acoples","Unidad"],["TOR-0034","CODO TUBERIA A 90° DE 1/2\" E50","Tornillería y acoples","Unidad"],["TOR-0035","CODO TUBERIA RECTA 12MM E49","Tornillería y acoples","Unidad"],["HER-0033","COLADOR P/ PINTURA","Herramientas","Unidad"],["REP-0032","COMPONENTES P/ CAMARAS","Repuestos y varios","Unidad"],["REP-0033","COMPRESOR AIRE DETRIOT USADO","Repuestos y varios","Unidad"],["LUB-0026","COOLANT DELO ELC 50/50","Lubricantes y fluidos","Unidad"],["LUB-0027","COOLANT ROJO GALON","Lubricantes y fluidos","Galón"],["LUB-0028","COOLANT VERDE GALON","Lubricantes y fluidos","Galón"],["ELE-0055","CORNETA DOBLE TONO 24V","Eléctrico","Unidad"],["ELE-0056","CORTE DE CORRIENTE","Eléctrico","Unidad"],["LIM-0016","CREMA P/ MANOS GALON","Limpieza y consumibles","Galón"],["LIM-0017","CREMA PARA MECANICOS","Limpieza y consumibles","Unidad"],["TOR-0036","CRUCES VARIOS TAMAÑOS","Tornillería y acoples","Unidad"],["HER-0034","CUBO 1-13/16\" ESP. 1\"","Herramientas","Unidad"],["HER-0035","CUBO 13/16\" ESP. 3/4\"","Herramientas","Unidad"],["HER-0036","CUBO 1-3/4 \" ESP. 3/4\"","Herramientas","Unidad"],["HER-0037","CUBO 1-5/16\" ESP. 3/4\"","Herramientas","Unidad"],["HER-0038","CUBO 1-5/8 \" ESP. 3/4\"","Herramientas","Unidad"],["HER-0039","CUBO 1-7/16\" ESP. 3/4\"","Herramientas","Unidad"],["HER-0040","CUBO 1-7/8\" ESP. 3/4\"","Herramientas","Unidad"],["HER-0041","CUBO 2\" ESP. 3/4\"","Herramientas","Unidad"],["HER-0042","CUBO 2-1/16 \" ESP. 3/4\"","Herramientas","Unidad"],["HER-0043","CUBO 2-1/8\" ESP. 3/4\"","Herramientas","Unidad"],["HER-0044","CUBO 22 MM ESP. 3/4\"","Herramientas","Unidad"],["HER-0045","CUBO 3\" ESP. 1\"","Herramientas","Unidad"],["HER-0046","CUBO 30 MM ESP. 3/4\"","Herramientas","Unidad"],["HER-0047","CUBO 32 MM ESP. 3/8\"","Herramientas","Unidad"],["HER-0048","CUBO 34 MM ESP. 3/4\"","Herramientas","Unidad"],["HER-0049","CUBO 36 MM ESP. 3/4\"","Herramientas","Unidad"],["HER-0050","CUBO 47 MM ESP. 3/4\"","Herramientas","Unidad"],["HER-0051","CUBO 54 MM ESP. 1\"","Herramientas","Unidad"],["HER-0052","CUBO 7/8\" ESP. 3/4\"","Herramientas","Unidad"],["HER-0053","CUBO DOBLE 38-20 MM","Herramientas","Unidad"],["HER-0054","CUBO HECHIZO DOBLE","Herramientas","Unidad"],["HER-0055","CUBO HECHIZO ESP. 3/4\"","Herramientas","Unidad"],["HER-0056","CUBO LARGO 38 MM","Herramientas","Unidad"],["HER-0057","CUBO P/ TECHO","Herramientas","Unidad"],["HER-0058","CUBO PROFUNDIDAD 1-1/16\"","Herramientas","Unidad"],["HER-0059","CUBOS HECHIZOS","Herramientas","Unidad"],["REP-0034","CUERPO VALVULAR USADO","Repuestos y varios","Unidad"],["LIM-0018","DESENGRASANTE EN SPRAY","Limpieza y consumibles","Unidad"],["LIM-0019","DESENGRASANTE SPRAY 92 P/ LOADERS","Limpieza y consumibles","Unidad"],["LIM-0020","DESINFCTANTES GALON","Limpieza y consumibles","Galón"],["LIM-0021","DESINFECTANTE GRADO SANITARIO GALON","Limpieza y consumibles","Galón"],["LIM-0022","DETERGENTE LIQUIDO","Limpieza y consumibles","Unidad"],["ELE-0057","DIODOS VARIOS","Eléctrico","Unidad"],["HER-0060","DISCO CORTE 14\"","Herramientas","Unidad"],["HER-0061","DISCO CORTE 4-1/2\"","Herramientas","Unidad"],["HER-0062","DISCO CORTE 9\"","Herramientas","Unidad"],["HER-0063","DISCO DESBASTE 4-1/2\"","Herramientas","Unidad"],["HER-0064","DISCO LIJA # 100","Herramientas","Unidad"],["HER-0065","DISCO LIJA # 120","Herramientas","Unidad"],["HER-0066","DISCO LIJA # 150","Herramientas","Unidad"],["HER-0067","DISCO LIJA # 180","Herramientas","Unidad"],["HER-0068","DISCO LIJA # 220","Herramientas","Unidad"],["HER-0069","DISCO LIJA # 240","Herramientas","Unidad"],["HER-0070","DISCO LIJA # 40","Herramientas","Unidad"],["HER-0071","DISCO LIJA # 400","Herramientas","Unidad"],["HER-0072","DISCO LIJA # 60","Herramientas","Unidad"],["HER-0073","DISCO LIJA # 80","Herramientas","Unidad"],["HER-0074","DISCO LIJA 100/600","Herramientas","Unidad"],["HER-0075","DISCO LIJA 40","Herramientas","Unidad"],["HER-0076","DISCO MIL HOJAS 4-1/2\"","Herramientas","Unidad"],["HER-0077","DISCO P/ LOADER LANTIS USADO","Herramientas","Unidad"],["HER-0078","DISCO TRONSADORA 12\"","Herramientas","Unidad"],["ELE-0058","EMBOBINADO KIT- 10SI","Eléctrico","Unidad"],["HER-0079","EMBUDO","Herramientas","Unidad"],["REP-0035","EMPAQUES VARIOS G13","Repuestos y varios","Unidad"],["LUB-0029","ENGINE TUNE-UP 325 ML","Lubricantes y fluidos","Unidad"],["LIM-0023","ESCOBONES GRANDES","Limpieza y consumibles","Unidad"],["HER-0080","ESMERILADORA INALAMBRICA ELITE","Herramientas","Unidad"],["REP-0036","ESQUINEROS P/ CARRETAS","Repuestos y varios","Unidad"],["HER-0081","EXTRACTOR PATA GALLO 15 PZ","Herramientas","Juego"],["HER-0082","EXTRACTOR RESORTE VALVULA","Herramientas","Unidad"],["FAJ-0002","FAJA #22570 E3","Fajas","Unidad"],["FAJ-0003","FAJA 01072019 G12","Fajas","Unidad"],["FAJ-0004","FAJA 11AV1270 / 15500","Fajas","Unidad"],["FAJ-0005","FAJA 11AV1420/7560","Fajas","Unidad"],["FAJ-0006","FAJA 13AV0980 / 17385","Fajas","Unidad"],["FAJ-0007","FAJA 13AV0990 / 17390","Fajas","Unidad"],["FAJ-0008","FAJA 13AV09900/9355","Fajas","Unidad"],["FAJ-0009","FAJA 13AV1080 / 17425","Fajas","Unidad"],["FAJ-0010","FAJA 13AV1195 / 17470","Fajas","Unidad"],["FAJ-0011","FAJA 13AV1245 / 17490","Fajas","Unidad"],["FAJ-0012","FAJA 13AV1295 / 17510","Fajas","Unidad"],["FAJ-0013","FAJA 13AV1320 / 17520","Fajas","Unidad"],["FAJ-0014","FAJA 13AV1320 / 17520 (M14)","Fajas","Unidad"],["FAJ-0015","FAJA 13AV1320 / 17520 (M14) G6","Fajas","Unidad"],["FAJ-0016","FAJA 13AV1395/9550","Fajas","Unidad"],["FAJ-0017","FAJA 13AV1470 / 17585","Fajas","Unidad"],["FAJ-0018","FAJA 13AV1510 / 17595","Fajas","Unidad"],["FAJ-0019","FAJA 13AV1535 / 17605","Fajas","Unidad"],["FAJ-0020","FAJA 13AV1550 / 17610","Fajas","Unidad"],["FAJ-0021","FAJA 13AV900 / 17355","Fajas","Unidad"],["FAJ-0022","FAJA 15560","Fajas","Unidad"],["FAJ-0023","FAJA 15AV1155 / 22460","Fajas","Unidad"],["FAJ-0024","FAJA 15AV1207 / 22475","Fajas","Unidad"],["FAJ-0025","FAJA 15AV1245 / 22490","Fajas","Unidad"],["FAJ-0026","FAJA 17525 / 8030772","Fajas","Unidad"],["FAJ-0027","FAJA 17AV1190 / 22470 (47\")","Fajas","Unidad"],["FAJ-0028","FAJA 17AV270 / 22500","Fajas","Unidad"],["FAJ-0029","FAJA 22570","Fajas","Unidad"],["FAJ-0030","FAJA 4PK0954 / 40375","Fajas","Unidad"],["FAJ-0031","FAJA 5PK1130 / 50445","Fajas","Unidad"],["FAJ-0032","FAJA 6PK1345 / K530K6","Fajas","Unidad"],["FAJ-0033","FAJA 6PK1360 / 5060535","Fajas","Unidad"],["FAJ-0034","FAJA 6PK1790 / 4060705","Fajas","Unidad"],["FAJ-0035","FAJA 6PK54 / 6PK1370","Fajas","Unidad"],["FAJ-0036","FAJA 7PK1153 / 5070454","Fajas","Unidad"],["FAJ-0037","FAJA 8PK1485","Fajas","Unidad"],["FAJ-0038","FAJA 8PK56 / 8PK1420 (R8)","Fajas","Unidad"],["FAJ-0039","FAJA 8PK58 / 8PK1475","Fajas","Unidad"],["FAJ-0040","FAJA 8PK58.5 / 8PK1485","Fajas","Unidad"],["FAJ-0041","FAJA DEUTZ 7064 G8","Fajas","Unidad"],["FAJ-0042","FAJA K15490 / 8020955","Fajas","Unidad"],["FAJ-0043","FAJA LISA A59","Fajas","Unidad"],["FAJ-0044","FAJA LISA A66","Fajas","Unidad"],["FAJ-0045","FAJA LISA B55","Fajas","Unidad"],["FAJ-0046","FAJA LISA B57","Fajas","Unidad"],["FAJ-0047","FAJA LISA B64","Fajas","Unidad"],["FAJ-0048","FAJA SIN NUMERO 5C","Fajas","Unidad"],["REP-0037","FIBRAS FRENO TRASERO GN125","Repuestos y varios","Unidad"],["PIN-0006","FIBRE FLEX","Pinturas y adhesivos","Unidad"],["PIN-0007","FIJADOR DE ROSCAS AZUL MEDIO # 7005","Pinturas y adhesivos","Unidad"],["PIN-0008","FIJADOR DE ROSCAS ROJO # 7004","Pinturas y adhesivos","Unidad"],["FIL-0001","FILTRO HIDRAULICO SE030G03B4","Filtros","Unidad"],["FIL-0002","FILTRO ACEITE #140517050 PERKINS","Filtros","Unidad"],["FIL-0003","FILTRO ACEITE 108276 MOVIL MERCEDES","Filtros","Unidad"],["FIL-0004","FILTRO ACEITE 330510070/FHU823","Filtros","Unidad"],["FIL-0005","FILTRO ACEITE 4X2","Filtros","Unidad"],["FIL-0006","FILTRO ACEITE 51459 WIX","Filtros","Unidad"],["FIL-0007","FILTRO ACEITE 51607 WIX","Filtros","Unidad"],["FIL-0008","FILTRO ACEITE 51626 WIX","Filtros","Unidad"],["FIL-0009","FILTRO ACEITE 51791 WIX","Filtros","Unidad"],["FIL-0010","FILTRO ACEITE 51820 WIX","Filtros","Unidad"],["FIL-0011","FILTRO ACEITE 51970 WIX","Filtros","Unidad"],["FIL-0012","FILTRO ACEITE 552100 DONALDSON","Filtros","Unidad"],["FIL-0013","FILTRO ACEITE 6511800109 CETSA","Filtros","Unidad"],["FIL-0014","FILTRO ACEITE 90915-YZZDS2","Filtros","Unidad"],["FIL-0015","FILTRO ACEITE A4275P","Filtros","Unidad"],["FIL-0016","FILTRO ACEITE A-7427SP PARTMO","Filtros","Unidad"],["FIL-0017","FILTRO ACEITE DONALDSON P502042","Filtros","Unidad"],["FIL-0018","FILTRO ACEITE HCX-17A","Filtros","Unidad"],["FIL-0019","FILTRO ACEITE HCX-22 FRANING","Filtros","Unidad"],["FIL-0020","FILTRO ACEITE LF17356","Filtros","Unidad"],["FIL-0021","FILTRO ACEITE LF3970","Filtros","Unidad"],["FIL-0022","FILTRO ACEITE P502042 DONALDSON","Filtros","Unidad"],["FIL-0023","FILTRO ACEITE P550008 DONALDSON","Filtros","Unidad"],["FIL-0024","FILTRO ACEITE P550564 DONALDSON","Filtros","Unidad"],["FIL-0025","FILTRO ACEITE P554407 DONALDSON","Filtros","Unidad"],["FIL-0026","FILTRO ACEITE P554770 DONALDSON","Filtros","Unidad"],["FIL-0027","FILTRO ACEITE PARTMO A2700SP","Filtros","Unidad"],["FIL-0028","FILTRO ACEITE PERKINS D04M07Y23","Filtros","Unidad"],["FIL-0029","FILTRO ACEITE PERKINS D13M11Y24","Filtros","Unidad"],["FIL-0030","FILTRO ACEITE PERKINS D14M11Y23","Filtros","Unidad"],["FIL-0031","FILTRO ACEITE PERKINS D24M01Y24","Filtros","Unidad"],["FIL-0032","FILTRO ACEITE PH2835","Filtros","Unidad"],["FIL-0033","FILTRO ACEITE PH2840 PARTMO","Filtros","Unidad"],["FIL-0034","FILTRO ACEITE PH2849A FRAM","Filtros","Unidad"],["FIL-0035","FILTRO ACEITE PH2876 HTC","Filtros","Unidad"],["FIL-0036","FILTRO ACEITE PH3612 FRAM","Filtros","Unidad"],["FIL-0037","FILTRO ACEITE PH3900 FRAM","Filtros","Unidad"],["FIL-0038","FILTRO ACEITE PH3985 FRAM","Filtros","Unidad"],["FIL-0039","FILTRO ACEITE PH8A","Filtros","Unidad"],["FIL-0040","FILTRO ACEITE PP17356","Filtros","Unidad"],["FIL-0041","FILTRO ACEITE SOF-7-2374/PH3614","Filtros","Unidad"],["FIL-0042","FILTRO ACEITE SOF-R-2201","Filtros","Unidad"],["FIL-0043","FILTRO ACEITE STAUFF SF-030/017963","Filtros","Unidad"],["FIL-0044","FILTRO ACEITE UJ1663/PH2876 HK","Filtros","Unidad"],["FIL-0045","FILTRO ACEITE UJ16718","Filtros","Unidad"],["FIL-0046","FILTRO ACEITE UJ1927F HK","Filtros","Unidad"],["FIL-0047","FILTRO ACEITE UJ-1986B/PH3950 HK","Filtros","Unidad"],["FIL-0048","FILTRO ACEITE UJ2011","Filtros","Unidad"],["FIL-0049","FILTRO ACEITE UJ-2134/P551670","Filtros","Unidad"],["FIL-0050","FILTRO ACEITE UJ3870","Filtros","Unidad"],["FIL-0051","FILTRO ACEITE WIX 33118/566915","Filtros","Unidad"],["FIL-0052","FILTRO AIRE UK7040 HK","Filtros","Unidad"],["FIL-0053","FILTRO AIRE 000090 3751 CETSA MOVIL #6","Filtros","Unidad"],["FIL-0054","FILTRO AIRE 17801-31160 TOYOTA P/ MOVIL","Filtros","Unidad"],["FIL-0055","FILTRO AIRE 42321 WIX","Filtros","Unidad"],["FIL-0056","FILTRO AIRE 42330 L16-17","Filtros","Unidad"],["FIL-0057","FILTRO AIRE 4X2 PEQUEÑO","Filtros","Unidad"],["FIL-0058","FILTRO AIRE 5543095 L19","Filtros","Unidad"],["FIL-0059","FILTRO AIRE 6800501","Filtros","Unidad"],["FIL-0060","FILTRO AIRE 87139-07010 (SCA-7-569)","Filtros","Unidad"],["FIL-0061","FILTRO AIRE 910-8301100 CETSA","Filtros","Unidad"],["FIL-0062","FILTRO AIRE AF1124","Filtros","Unidad"],["FIL-0063","FILTRO AIRE AF25962 R11","Filtros","Unidad"],["FIL-0064","FILTRO AIRE AH1192","Filtros","Unidad"],["FIL-0065","FILTRO AIRE AP10903 PARTMO","Filtros","Unidad"],["FIL-0066","FILTRO AIRE AP31088 PARTMO","Filtros","Unidad"],["FIL-0067","FILTRO AIRE AS5523","Filtros","Unidad"],["FIL-0068","FILTRO AIRE CA8737","Filtros","Unidad"],["FIL-0069","FILTRO AIRE CH1242","Filtros","Unidad"],["FIL-0070","FILTRO AIRE HIDROLAVADORA 42323 WIX","Filtros","Unidad"],["FIL-0071","FILTRO AIRE HONGO UNIVERSAL","Filtros","Unidad"],["FIL-0072","FILTRO AIRE LAF 1834 R9","Filtros","Unidad"],["FIL-0073","FILTRO AIRE LAF 1947","Filtros","Unidad"],["FIL-0074","FILTRO AIRE LAF222 (UK7464)","Filtros","Unidad"],["FIL-0075","FILTRO AIRE P557452","Filtros","Unidad"],["FIL-0076","FILTRO AIRE P776159 P7","Filtros","Unidad"],["FIL-0077","FILTRO AIRE P778994","Filtros","Unidad"],["FIL-0078","FILTRO AIRE SAF-1-5656","Filtros","Unidad"],["FIL-0079","FILTRO AIRE SAF-5368","Filtros","Unidad"],["FIL-0080","FILTRO AIRE SAF-R-5755","Filtros","Unidad"],["FIL-0081","FILTRO AIRE SEINECA SCA-7-569","Filtros","Unidad"],["FIL-0082","FILTRO AIRE UK14197-01 R8","Filtros","Unidad"],["FIL-0083","FILTRO AIRE UK7016","Filtros","Unidad"],["FIL-0084","FILTRO AIRE UK7245","Filtros","Unidad"],["FIL-0085","FILTRO AIRE UK8243F","Filtros","Unidad"],["FIL-0086","FILTRO CARBURATE 651 090 290 052","Filtros","Unidad"],["FIL-0087","FILTRO COMBSUTIBLE 33121","Filtros","Unidad"],["FIL-0088","FILTRO COMBSUTIBLE A1345SP","Filtros","Unidad"],["FIL-0089","FILTRO COMBUSTIBLE A-97","Filtros","Unidad"],["FIL-0090","FILTRO COMBUSTIBLE 01182671 DEUTZ","Filtros","Unidad"],["FIL-0091","FILTRO COMBUSTIBLE 0450 4438 DEUTZ","Filtros","Unidad"],["FIL-0092","FILTRO COMBUSTIBLE 330560507 (R3)","Filtros","Unidad"],["FIL-0093","FILTRO COMBUSTIBLE 33120","Filtros","Unidad"],["FIL-0094","FILTRO COMBUSTIBLE 33405","Filtros","Unidad"],["FIL-0095","FILTRO COMBUSTIBLE 33411 WIX","Filtros","Unidad"],["FIL-0096","FILTRO COMBUSTIBLE 33532","Filtros","Unidad"],["FIL-0097","FILTRO COMBUSTIBLE 4326658 L19-L20","Filtros","Unidad"],["FIL-0098","FILTRO COMBUSTIBLE 439-5037","Filtros","Unidad"],["FIL-0099","FILTRO COMBUSTIBLE 4816636","Filtros","Unidad"],["FIL-0100","FILTRO COMBUSTIBLE A-7602","Filtros","Unidad"],["FIL-0101","FILTRO COMBUSTIBLE BF1289SP","Filtros","Unidad"],["FIL-0102","FILTRO COMBUSTIBLE BF7990","Filtros","Unidad"],["FIL-0103","FILTRO COMBUSTIBLE CS8744A","Filtros","Unidad"],["FIL-0104","FILTRO COMBUSTIBLE DONALDSON P556245","Filtros","Unidad"],["FIL-0105","FILTRO COMBUSTIBLE FC-6504","Filtros","Unidad"],["FIL-0106","FILTRO COMBUSTIBLE FF5612","Filtros","Unidad"],["FIL-0107","FILTRO COMBUSTIBLE FP570F","Filtros","Unidad"],["FIL-0108","FILTRO COMBUSTIBLE FP586F","Filtros","Unidad"],["FIL-0109","FILTRO COMBUSTIBLE FP941F","Filtros","Unidad"],["FIL-0110","FILTRO COMBUSTIBLE FS19914","Filtros","Unidad"],["FIL-0111","FILTRO COMBUSTIBLE FS20020","Filtros","Unidad"],["FIL-0112","FILTRO COMBUSTIBLE G2920","Filtros","Unidad"],["FIL-0113","FILTRO COMBUSTIBLE KOHLER 330560552","Filtros","Unidad"],["FIL-0114","FILTRO COMBUSTIBLE L269F","Filtros","Unidad"],["FIL-0115","FILTRO COMBUSTIBLE L296F","Filtros","Unidad"],["FIL-0116","FILTRO COMBUSTIBLE LFP928F","Filtros","Unidad"],["FIL-0117","FILTRO COMBUSTIBLE P1147G/B75810","Filtros","Unidad"],["FIL-0118","FILTRO COMBUSTIBLE P3599","Filtros","Unidad"],["FIL-0119","FILTRO COMBUSTIBLE P550004","Filtros","Unidad"],["FIL-0120","FILTRO COMBUSTIBLE P550463","Filtros","Unidad"],["FIL-0121","FILTRO COMBUSTIBLE P550643","Filtros","Unidad"],["FIL-0122","FILTRO COMBUSTIBLE P550848","Filtros","Unidad"],["FIL-0123","FILTRO COMBUSTIBLE P550880","Filtros","Unidad"],["FIL-0124","FILTRO COMBUSTIBLE P551026","Filtros","Unidad"],["FIL-0125","FILTRO COMBUSTIBLE P551034","Filtros","Unidad"],["FIL-0126","FILTRO COMBUSTIBLE PF7687","Filtros","Unidad"],["FIL-0127","FILTRO COMBUSTIBLE SF271","Filtros","Unidad"],["FIL-0128","FILTRO COMBUSTIBLE SFF6916","Filtros","Unidad"],["FIL-0129","FILTRO COMBUSTIBLE SFF-7-7284","Filtros","Unidad"],["FIL-0130","FILTRO COMBUSTIBLE SFF-R-3012","Filtros","Unidad"],["FIL-0131","FILTRO COMBUSTIBLE SFF-S-2001","Filtros","Unidad"],["FIL-0132","FILTRO COMBUSTIBLE TECFIL PSD900","Filtros","Unidad"],["FIL-0133","FILTRO COMBUSTIBLE UC4700B","Filtros","Unidad"],["FIL-0134","FILTRO COMBUSTIBLE UC4904C","Filtros","Unidad"],["FIL-0135","FILTRO COMBUSTIBLE UC5913","Filtros","Unidad"],["FIL-0136","FILTRO COMBUTIBLE 33411","Filtros","Unidad"],["FIL-0137","FILTRO FRANINGN A-116","Filtros","Unidad"],["FIL-0138","FILTRO HIDRAULICO 33651","Filtros","Unidad"],["FIL-0139","FILTRO HIDRAULICO 42323","Filtros","Unidad"],["FIL-0140","FILTRO HIDRAULICO 51759 R7","Filtros","Unidad"],["FIL-0141","FILTRO HIDRAULICO 67502-20540-71","Filtros","Unidad"],["FIL-0142","FILTRO HIDRAULICO 67502-30760-71","Filtros","Unidad"],["FIL-0143","FILTRO HIDRAULICO 8T-3910/P556915","Filtros","Unidad"],["FIL-0144","FILTRO HIDRAULICO BT8426-MPE","Filtros","Unidad"],["FIL-0145","FILTRO HIDRAULICO BT8830","Filtros","Unidad"],["FIL-0146","FILTRO HIDRAULICO BT89-10 AM01","Filtros","Unidad"],["FIL-0147","FILTRO HIDRAULICO FF840","Filtros","Unidad"],["FIL-0148","FILTRO HIDRAULICO HC55111/P550388","Filtros","Unidad"],["FIL-0149","FILTRO HIDRAULICO LFH4922","Filtros","Unidad"],["FIL-0150","FILTRO HIDRAULICO P1653A","Filtros","Unidad"],["FIL-0151","FILTRO HIDRAULICO P550477","Filtros","Unidad"],["FIL-0152","FILTRO HIDRAULICO P569383","Filtros","Unidad"],["FIL-0153","FILTRO LIQ. REFRIGERANTE 24071","Filtros","Unidad"],["FIL-0154","FILTRO LIQ. REFRIGERANTE AW-51375P","Filtros","Unidad"],["FIL-0155","FILTRO MP C2D-3","Filtros","Unidad"],["FIL-0156","FILTRO TOYOTA 3L25YH","Filtros","Unidad"],["FIL-0157","FILTRO TOYOTA B04H-A4","Filtros","Unidad"],["FIL-0158","FILTRO TOYOTA FK25","Filtros","Unidad"],["FIL-0159","FILTRO TRANSMISION 51259 WIX","Filtros","Unidad"],["REP-0038","FLAG ASSEMBLY #A005800A-1","Repuestos y varios","Unidad"],["ELE-0059","FLASHER 12V 3P","Eléctrico","Unidad"],["ELE-0060","FLASHER 2 PINES 24V","Eléctrico","Unidad"],["ELE-0061","FLASHER 2P 12V","Eléctrico","Unidad"],["ELE-0062","FLASHER 2P24V","Eléctrico","Unidad"],["ELE-0063","FLASHER 3 PINES 24V","Eléctrico","Unidad"],["ELE-0064","FLASHER 3P 12V","Eléctrico","Unidad"],["ELE-0065","FLASHER 3P 24V","Eléctrico","Unidad"],["ELE-0066","FLASSHER 12V 2P","Eléctrico","Unidad"],["LUB-0030","FLUIDO DE FRENO PETRONAS TUTELA LITRO","Lubricantes y fluidos","Litro"],["LUB-0031","FLUSH RADIADOR #9983","Lubricantes y fluidos","Unidad"],["PAP-0009","FOLDER TAMAÑO CARTA AZUL","Papelería","Unidad"],["PAP-0010","FOLDER TAMAÑO CARTA NARANJA","Papelería","Unidad"],["ELE-0067","FUSIBLE 10A E26","Eléctrico","Unidad"],["ELE-0068","FUSIBLE 15A E27","Eléctrico","Unidad"],["ELE-0069","FUSIBLE 20A","Eléctrico","Unidad"],["ELE-0070","FUSIBLE 25A E29","Eléctrico","Unidad"],["ELE-0071","FUSIBLE 30A E30","Eléctrico","Unidad"],["ELE-0072","FUSIBLE 35A","Eléctrico","Unidad"],["ELE-0073","FUSIBLE 40A E23","Eléctrico","Unidad"],["ELE-0074","FUSIBLE 5A E25","Eléctrico","Unidad"],["ELE-0075","FUSIBLE 80A E22","Eléctrico","Unidad"],["ELE-0076","FUSIBLE MUELA PEQ. 10A E32","Eléctrico","Unidad"],["ELE-0077","FUSIBLE MUELA PEQ. 15A E33","Eléctrico","Unidad"],["ELE-0078","FUSIBLE MUELA PEQ. 20A E34","Eléctrico","Unidad"],["ELE-0079","FUSIBLE MUELA PEQ. 25A E35","Eléctrico","Unidad"],["ELE-0080","FUSIBLE MUELA PEQ. 30A E36","Eléctrico","Unidad"],["ELE-0081","FUSIBLE MUELA PEQ. 5A E31","Eléctrico","Unidad"],["PIN-0009","GASA P/ CAVIDADES WURTH 200 ML USADO","Pinturas y adhesivos","Unidad"],["HER-0083","GATA HIDRAULICA 20 LBS","Herramientas","Unidad"],["HER-0084","GATA HIDRAULICA 3 LBS PERFIL BAJO","Herramientas","Unidad"],["TOR-0037","GAZA METALICA #100-120","Tornillería y acoples","Unidad"],["TOR-0038","GAZA METALICA #100-130","Tornillería y acoples","Unidad"],["TOR-0039","GAZA METALICA #10-16","Tornillería y acoples","Unidad"],["TOR-0040","GAZA METALICA #104-112","Tornillería y acoples","Unidad"],["TOR-0041","GAZA METALICA #12-22","Tornillería y acoples","Unidad"],["TOR-0042","GAZA METALICA #16-27","Tornillería y acoples","Unidad"],["TOR-0043","GAZA METALICA #20-32","Tornillería y acoples","Unidad"],["TOR-0044","GAZA METALICA #25-40","Tornillería y acoples","Unidad"],["TOR-0045","GAZA METALICA #30-45","Tornillería y acoples","Unidad"],["TOR-0046","GAZA METALICA #32-50","Tornillería y acoples","Unidad"],["TOR-0047","GAZA METALICA #40-60","Tornillería y acoples","Unidad"],["TOR-0048","GAZA METALICA #4250133035008","Tornillería y acoples","Unidad"],["TOR-0049","GAZA METALICA #50-70","Tornillería y acoples","Unidad"],["TOR-0050","GAZA METALICA #56-59","Tornillería y acoples","Unidad"],["TOR-0051","GAZA METALICA #60-80","Tornillería y acoples","Unidad"],["TOR-0052","GAZA METALICA #70-90","Tornillería y acoples","Unidad"],["TOR-0053","GAZA METALICA #80-100","Tornillería y acoples","Unidad"],["TOR-0054","GAZA METALICA #90-110","Tornillería y acoples","Unidad"],["TOR-0055","GAZA PARA BATERIA E19","Tornillería y acoples","Unidad"],["TOR-0056","GAZA SIN FIN #10","Tornillería y acoples","Unidad"],["TOR-0057","GAZA SIN FIN #12","Tornillería y acoples","Unidad"],["TOR-0058","GAZA SIN FIN #16","Tornillería y acoples","Unidad"],["TOR-0059","GAZA SIN FIN #2","Tornillería y acoples","Unidad"],["TOR-0060","GAZA SIN FIN #20","Tornillería y acoples","Unidad"],["TOR-0061","GAZA SIN FIN #24","Tornillería y acoples","Unidad"],["TOR-0062","GAZA SIN FIN #28","Tornillería y acoples","Unidad"],["TOR-0063","GAZA SIN FIN #32","Tornillería y acoples","Unidad"],["TOR-0064","GAZA SIN FIN #36","Tornillería y acoples","Unidad"],["TOR-0065","GAZA SIN FIN #4","Tornillería y acoples","Unidad"],["TOR-0066","GAZA SIN FIN #40","Tornillería y acoples","Unidad"],["TOR-0067","GAZA SIN FIN #44","Tornillería y acoples","Unidad"],["TOR-0068","GAZA SIN FIN #48","Tornillería y acoples","Unidad"],["TOR-0069","GAZA SIN FIN #6","Tornillería y acoples","Unidad"],["TOR-0070","GAZA SIN FIN #8","Tornillería y acoples","Unidad"],["LUB-0032","GRASA BLANCA LITHIUM VESLEE","Lubricantes y fluidos","Unidad"],["LUB-0033","GRASA BLANCA LITIO 2 EN UNO 282 ML USADO","Lubricantes y fluidos","Unidad"],["LUB-0034","GRASA DIELECTRICA","Lubricantes y fluidos","Unidad"],["LUB-0035","GRASA DIELECTRICA USADA SPRAY","Lubricantes y fluidos","Unidad"],["LUB-0036","GRASA LITHIUM BLANCA CRC 283 G","Lubricantes y fluidos","Unidad"],["LUB-0037","GRASA MULTIUSO ALTA TEMPERATURA #9941","Lubricantes y fluidos","Unidad"],["LUB-0038","GRASA PARA BATERIAS #9914","Lubricantes y fluidos","Unidad"],["LUB-0039","GRASA SINTETICA 3 EN 1","Lubricantes y fluidos","Unidad"],["EPP-0018","GUANTES DE SEGURIDAD","EPP","Unidad"],["ELE-0082","HALOGENO BOMBILLO 12V","Eléctrico","Unidad"],["ELE-0083","HALOGENO H1 12V","Eléctrico","Unidad"],["ELE-0084","HALOGENO H11 12V","Eléctrico","Unidad"],["ELE-0085","HALOGENO H3 12V","Eléctrico","Unidad"],["ELE-0086","HALOGENO H3 24V","Eléctrico","Unidad"],["ELE-0087","HALOGENO H4 24V","Eléctrico","Unidad"],["ELE-0088","HALOGENO H4651","Eléctrico","Unidad"],["ELE-0089","HALOGENO H7 12V 55W","Eléctrico","Unidad"],["ELE-0090","HALOGENO H7 24V","Eléctrico","Unidad"],["ELE-0091","HALOGENO HB1 12V 65/45W","Eléctrico","Unidad"],["ELE-0092","HAOLGENO BOM-009 12V 100/80W","Eléctrico","Unidad"],["LIM-0024","HERBICIDA RODEO 35.6 SL USADO","Limpieza y consumibles","Unidad"],["HER-0085","HIDROLAVADORA","Herramientas","Unidad"],["HER-0086","INFLADOR PARA NEUMATICO","Herramientas","Unidad"],["ELE-0093","INTERRUPTOR DE 2 PASOS","Eléctrico","Unidad"],["ELE-0094","INTERRUPTOR DE 3 PASOS","Eléctrico","Unidad"],["ELE-0095","INTERRUPTOR ENCENDIDO","Eléctrico","Unidad"],["REP-0039","INYECTORES 14Z","Repuestos y varios","Unidad"],["LIM-0025","ISOPO P/ LAVAR SERVICIOS","Limpieza y consumibles","Unidad"],["LIM-0026","JABON EN POLVO KILO","Limpieza y consumibles","Kg"],["LIM-0027","JABON LAVAPLATOS KILO","Limpieza y consumibles","Kg"],["LIM-0028","JABON LIQUIDO P/ MANOS GALON","Limpieza y consumibles","Galón"],["ELE-0096","JHUTDOWN SOLENOID #090169","Eléctrico","Unidad"],["HER-0087","JUEGO ALICATE SEGUROS","Herramientas","Juego"],["HER-0088","JUEGO BROCA SIERRA MILWUAKEE 10 PZ","Herramientas","Juego"],["HER-0089","KIT MANOMETRO PRESION ACEITE","Herramientas","Juego"],["HER-0090","KIT MANOMETRO PRESION CILINDROS","Herramientas","Juego"],["HER-0091","KIT PARA HACER ROSCAS TRUPPER 79 PZ","Herramientas","Juego"],["HER-0092","KIT SACA FILTROS 14 PZ","Herramientas","Juego"],["HER-0093","KIT TEST FUGAS DE COMBUSTIBLES","Herramientas","Juego"],["ELE-0097","LAMPARA ANTI NIEBLA 55V","Eléctrico","Unidad"],["ELE-0098","LAMPARA DESTELLO AMBAR 12V","Eléctrico","Unidad"],["LUB-0040","LAVADOR INTERNO MOTOR ECOM 480 ML","Lubricantes y fluidos","Unidad"],["EPP-0019","LENTE DE SEGURIDAD CLARO","EPP","Unidad"],["EPP-0020","LENTE DE SEGURIDAD OSCURO","EPP","Unidad"],["HER-0094","LIJADORA ORBITAL 6 \" VICO","Herramientas","Unidad"],["LIM-0029","LIMPIA CARBURADOR #9938","Limpieza y consumibles","Unidad"],["LIM-0030","LIMPIA PISOS INDUSTRIAL GALON","Limpieza y consumibles","Galón"],["LIM-0031","LIMPIA TAPICERIA GALON","Limpieza y consumibles","Galón"],["LIM-0032","LIMPIADOR BORNER P/ LOADER","Limpieza y consumibles","Unidad"],["LIM-0033","LIMPIADOR CONTACTOS ELECTRICOS","Limpieza y consumibles","Unidad"],["LIM-0034","LIMPIADOR CONTACTOS ELECTRICOS P/ LOADER","Limpieza y consumibles","Unidad"],["LIM-0035","LIMPIADOR CORTADOR ASIENTO INYECTORES DIESEL","Limpieza y consumibles","Unidad"],["LIM-0036","LIMPIADOR DEL SISTEMA CATALITICO #9942","Limpieza y consumibles","Unidad"],["LIM-0037","LIMPIADOR FRENOS Y PARTES","Limpieza y consumibles","Unidad"],["LIM-0038","LIMPIADOR INYECTOR DIESEL","Limpieza y consumibles","Unidad"],["LIM-0039","LIMPIADOR INYECTOR GASOLINA","Limpieza y consumibles","Unidad"],["LIM-0040","LIMPIADOR PARTES Y FRENOS BIDON 5L","Limpieza y consumibles","Bidón"],["LIM-0041","LIMPIADOR SPRAY DE FILTROS DE PARTICULAS # 9937","Limpieza y consumibles","Unidad"],["LIM-0042","LIMPIEZA MOTOR WURTH 500 ML USADO","Limpieza y consumibles","Unidad"],["HER-0095","LINGA AMARILLA GRANDE","Herramientas","Unidad"],["LUB-0041","LIQUIDO DE FRENOS DOT3 250 ML","Lubricantes y fluidos","Unidad"],["LUB-0042","LIQUIDO DE FRENOS DOT3 500ML","Lubricantes y fluidos","Unidad"],["LUB-0043","LIQUIDO DE FRENOS DOT4 500ML","Lubricantes y fluidos","Unidad"],["LUB-0044","LIQUIDO DE FRENOS DOT4 LITRO","Lubricantes y fluidos","Litro"],["LUB-0045","LIQUIDO FRENOS DOT4 WARNER 946 ML","Lubricantes y fluidos","Unidad"],["REP-0040","LIQUIDO LIMPIA PARABRISAS AKRON","Repuestos y varios","Unidad"],["LLA-0001","LLANTA 195R15C","Llantas","Unidad"],["LLA-0002","LLANTA 235/60R216","Llantas","Unidad"],["LLA-0003","LLANTA 235/85R16","Llantas","Unidad"],["LLA-0004","LLANTA 355/50-20","Llantas","Unidad"],["LLA-0005","LLANTA 355/50-20 USADA","Llantas","Unidad"],["LLA-0006","LLANTA 400X8 SOLIDA","Llantas","Unidad"],["LLA-0007","LLANTA 700R12","Llantas","Unidad"],["LLA-0008","LLANTA 825X15 SOLIDA","Llantas","Unidad"],["LLA-0009","LLANTA 825X15 SOLIDA USADA","Llantas","Unidad"],["HER-0096","LLAVES FRANCESAS","Herramientas","Unidad"],["HER-0097","LLAVES TORX FORCE 10 PZ","Herramientas","Juego"],["HER-0098","LLAVES TORX MIKEL´S 9 PZ","Herramientas","Juego"],["REP-0041","LLAVIN ARRANQUE P/ DIESEL 6T","Repuestos y varios","Unidad"],["LUB-0046","LUBIX LUBRICANTE/AFLOJA TODO P/ LOADER","Lubricantes y fluidos","Unidad"],["LUB-0047","LUBRICANTE DE CADENA LITIO AZUL","Lubricantes y fluidos","Unidad"],["LUB-0048","LUBRICANTE SEMI SINTETICO CASE 1","Lubricantes y fluidos","Unidad"],["LUB-0049","LUBRICANTES P/ CORREAS CYCLO 226G USADA","Lubricantes y fluidos","Unidad"],["LUB-0050","LUBRIPLATE USADO","Lubricantes y fluidos","Unidad"],["ELE-0099","LUCES DIRECCIONALES RECTANGULAR","Eléctrico","Unidad"],["ELE-0100","LUZ AMARILLA TIPO PRACHE #2904","Eléctrico","Unidad"],["ELE-0101","LUZ AMARILLA TIPO PRACHE C/ QR","Eléctrico","Unidad"],["ELE-0102","LUZ AMARILLO TRIANGULAR #008-003P-1","Eléctrico","Unidad"],["ELE-0103","LUZ AMBAR TIPO PARCHE #1007E","Eléctrico","Unidad"],["ELE-0104","LUZ AMBAR TIPO PARCHE #1041E","Eléctrico","Unidad"],["ELE-0105","LUZ BLANCA TIPO PARCHE #1007E","Eléctrico","Unidad"],["ELE-0106","LUZ BLANCA TIPO PARCHE #1023*9E","Eléctrico","Unidad"],["ELE-0107","LUZ BLANCA TIPO PARCHE #1024E","Eléctrico","Unidad"],["ELE-0108","LUZ CUADRADA BICOLOR #8324CFL","Eléctrico","Unidad"],["ELE-0109","LUZ ROJA TIPO PARCHE #1007E","Eléctrico","Unidad"],["ELE-0110","LUZ ROJA TIPO PARCHE #1015","Eléctrico","Unidad"],["ELE-0111","LUZ ROJA TIPO PARCHE #1053E","Eléctrico","Unidad"],["ELE-0112","LUZ TRABAJO CUADRADA S/ BASE","Eléctrico","Unidad"],["HER-0099","MACHOS VARIADOS","Herramientas","Unidad"],["HER-0100","MANERAL PARA MACHUELO 3/8\"","Herramientas","Unidad"],["HER-0101","MANGUERA P/ PISTOLA IMPACTO 1\"","Herramientas","Unidad"],["REP-0042","MANGUERA P/ TOILET","Repuestos y varios","Unidad"],["REP-0043","MANGUERAS USADAS DIFERENTES TAMAÑOS","Repuestos y varios","Unidad"],["HER-0102","MAQUINA PARA SOLDAR JASIC","Herramientas","Unidad"],["PIN-0010","MASKING AMARILLO 1\"","Pinturas y adhesivos","Rollo"],["PIN-0011","MASKING AMARILLO 1/2\"","Pinturas y adhesivos","Rollo"],["PIN-0012","MASKING AMARILLO 1-1/2\"","Pinturas y adhesivos","Rollo"],["PIN-0013","MASKING AMARILLO 2\"","Pinturas y adhesivos","Rollo"],["PIN-0014","MASKING AMARILLO 3/4\"","Pinturas y adhesivos","Rollo"],["PIN-0015","MASKING VERDE 1\"","Pinturas y adhesivos","Rollo"],["PIN-0016","MASKING VERDE 1/2\"","Pinturas y adhesivos","Rollo"],["PIN-0017","MASKING VERDE 2\"","Pinturas y adhesivos","Rollo"],["HER-0103","MAZO 12 LBS","Herramientas","Unidad"],["HER-0104","MAZO 14 LBS","Herramientas","Unidad"],["HER-0105","MAZO 16 LBS","Herramientas","Unidad"],["LIM-0043","MECHA P/ PISO","Limpieza y consumibles","Unidad"],["HER-0106","MEDIDOR DE PRESION AIRE","Herramientas","Unidad"],["LUB-0051","MOLY COAT LUBRICANTE DE CADENAS P/ LOADERS","Lubricantes y fluidos","Unidad"],["LUB-0052","MOLY LUBRICANTE INDUSTRIAL P/ LOADERS","Lubricantes y fluidos","Unidad"],["REP-0044","MOTOR P/ COMPRESOR # SLF145T274L","Repuestos y varios","Unidad"],["LUB-0053","MULTILUBRICANTE","Lubricantes y fluidos","Unidad"],["HER-0107","MULTIMETRO DIGITAL TRUPPER","Herramientas","Unidad"],["REP-0045","ORBITROL P/ LOADER USADO","Repuestos y varios","Unidad"],["LIM-0044","PALO PISO","Limpieza y consumibles","Unidad"],["UNI-0039","PANTALON AZUL C/ REFLECTIVO T. 28","Uniformes","Unidad"],["UNI-0040","PANTALON AZUL C/ REFLECTIVO T. 30","Uniformes","Unidad"],["UNI-0041","PANTALON AZUL C/ REFLECTIVO T. 32","Uniformes","Unidad"],["UNI-0042","PANTALON AZUL C/ REFLECTIVO T. 34","Uniformes","Unidad"],["UNI-0043","PANTALON AZUL C/ REFLECTIVO T. 36","Uniformes","Unidad"],["UNI-0044","PANTALON AZUL C/ REFLECTIVO T. 38","Uniformes","Unidad"],["UNI-0045","PANTALON AZUL C/ REFLECTIVO T. 40","Uniformes","Unidad"],["UNI-0046","PANTALON AZUL C/ REFLECTIVO T. 42","Uniformes","Unidad"],["LIM-0045","PAPEL HIGIENICO ROLLO P/ DISPENSADOR PAQ. 6","Limpieza y consumibles","Rollo"],["TOR-0071","PASADORES E160","Tornillería y acoples","Unidad"],["TOR-0072","PASADORES E161","Tornillería y acoples","Unidad"],["TOR-0073","PASADORES E162","Tornillería y acoples","Unidad"],["TOR-0074","PASADORES E163","Tornillería y acoples","Unidad"],["TOR-0075","PASADORES E164","Tornillería y acoples","Unidad"],["TOR-0076","PASADORES E165","Tornillería y acoples","Unidad"],["TOR-0077","PASADORES E166","Tornillería y acoples","Unidad"],["TOR-0078","PASADORES E167","Tornillería y acoples","Unidad"],["TOR-0079","PASADORES E168","Tornillería y acoples","Unidad"],["TOR-0080","PASADORES E169","Tornillería y acoples","Unidad"],["TOR-0081","PASADORES E170","Tornillería y acoples","Unidad"],["TOR-0082","PASADORES E171","Tornillería y acoples","Unidad"],["TOR-0083","PASADORES E172","Tornillería y acoples","Unidad"],["TOR-0084","PASADORES E173","Tornillería y acoples","Unidad"],["TOR-0085","PASADORES E174","Tornillería y acoples","Unidad"],["TOR-0086","PASADORES E175","Tornillería y acoples","Unidad"],["TOR-0087","PASADORES E176","Tornillería y acoples","Unidad"],["TOR-0088","PASADORES E177","Tornillería y acoples","Unidad"],["REP-0046","PASTILLAS P/ FRENO (PAR)","Repuestos y varios","Par"],["LIM-0046","PASTILLAS SANI-PACK P/ TOILET 1X20","Limpieza y consumibles","Unidad"],["PIN-0018","PEGAMENTO EPOXICO PARA METALES # 7001","Pinturas y adhesivos","Unidad"],["PIN-0019","PEGAMENTO EPOXICO PARA PLASTICO #7002","Pinturas y adhesivos","Unidad"],["LUB-0054","PENETRANTE WD40 11 OZ","Lubricantes y fluidos","Unidad"],["LUB-0055","PENETRANTE ABRO 80","Lubricantes y fluidos","Unidad"],["LUB-0056","PENETRANTE EN SPRAY CYCLO","Lubricantes y fluidos","Unidad"],["LUB-0057","PENETRANTE REMOVEDOR Y ELIMINADOR CORROSION","Lubricantes y fluidos","Unidad"],["LUB-0058","PENETRANTE ROST OFF","Lubricantes y fluidos","Unidad"],["TOR-0089","PERNO DE ANCLAJE","Tornillería y acoples","Unidad"],["LUB-0059","PICHINGA ECO BLUE UREA","Lubricantes y fluidos","Pichinga"],["PIN-0020","PINTRA SPRAY PLATEADO","Pinturas y adhesivos","Unidad"],["PIN-0021","PINTURA SPRAY AMARILLO","Pinturas y adhesivos","Unidad"],["PIN-0022","PINTURA SPRAY BLANCA","Pinturas y adhesivos","Unidad"],["PIN-0023","PINTURA SPRAY FOSFORECENTE","Pinturas y adhesivos","Unidad"],["PIN-0024","PINTURA SPRAY GRIS","Pinturas y adhesivos","Unidad"],["PIN-0025","PINTURA SPRAY NARANJA","Pinturas y adhesivos","Unidad"],["PIN-0026","PINTURA SPRAY NEGRO","Pinturas y adhesivos","Unidad"],["PIN-0027","PINTURA SPRAY ROJO","Pinturas y adhesivos","Unidad"],["PIN-0028","PINTURA SPRAY VERDE","Pinturas y adhesivos","Unidad"],["HER-0108","PISTOLA CALOR SKILL 1200W","Herramientas","Unidad"],["HER-0109","PISTOLA IMPACTO 1\"","Herramientas","Unidad"],["HER-0110","PISTOLA IMPACTO AIRE TOTAL1/2\"","Herramientas","Unidad"],["ELE-0113","PITO 12V","Eléctrico","Unidad"],["ELE-0114","PITO 24 VOLTIOS","Eléctrico","Unidad"],["ELE-0115","PLACA DE DIODO #1B354","Eléctrico","Unidad"],["ELE-0116","PLACA DE DIODO 1HR789","Eléctrico","Unidad"],["ELE-0117","PLACA DE DIODO IMR10094","Eléctrico","Unidad"],["ELE-0118","PLUNGE FOR SOLENOIDE","Eléctrico","Unidad"],["ELE-0119","POLEA ARRANCADOR","Eléctrico","Unidad"],["REP-0047","POLES 6 CANALES MOVIL 14","Repuestos y varios","Unidad"],["REP-0048","POLES P/ ALTERNADOR 8 CANALES","Repuestos y varios","Unidad"],["ELE-0120","PORTA FUSIBLE IMPERMEABLE","Eléctrico","Unidad"],["ELE-0121","PROTECTOR DE BORNER G18","Eléctrico","Unidad"],["REP-0049","PROTECTOR SPRAY P/ BATERIA USADO","Repuestos y varios","Unidad"],["LIM-0047","PULIDOR PARABRISAS SUR","Limpieza y consumibles","Unidad"],["HER-0111","PULIDORA/ CONEJA SHINE MATE","Herramientas","Unidad"],["ELE-0122","RELAY 11 PINES","Eléctrico","Unidad"],["ELE-0123","RELAY 12V 4P","Eléctrico","Unidad"],["ELE-0124","RELAY 12V 5P","Eléctrico","Unidad"],["ELE-0125","RELAY 5 PINES 24V","Eléctrico","Unidad"],["ELE-0126","RELAY 5P 12V","Eléctrico","Unidad"],["ELE-0127","RELAY 5P 12V PLANO","Eléctrico","Unidad"],["ELE-0128","RELAY 5P 24V","Eléctrico","Unidad"],["ELE-0129","RELAY 8 PINES","Eléctrico","Unidad"],["REP-0050","RELOJ CUADRADO BLANCO","Repuestos y varios","Unidad"],["REP-0051","RELOJ MEDIDOR TEMPERATURA AGUA","Repuestos y varios","Unidad"],["REP-0052","RELOJ PRESION ACEITE 80 PSI","Repuestos y varios","Unidad"],["REP-0053","RELOJ TEMPERATURA AGUA","Repuestos y varios","Unidad"],["LIM-0048","REMOVEDOR DE CORROCION #9995","Limpieza y consumibles","Unidad"],["HER-0112","REPASADA DE ROSCAS MILIMETRICAS 40 PZ","Herramientas","Juego"],["PAP-0011","RESMAS PAPEL TAMAÑO CARTA","Papelería","Resma"],["TOR-0090","RESORTE PARA TAPAS","Tornillería y acoples","Unidad"],["LIM-0049","RESTAURADOR PARTES NEGRAS USADO","Limpieza y consumibles","Unidad"],["ROL-0001","ROL 11949/10","Rodamientos","Unidad"],["ROL-0002","ROL 12212","Rodamientos","Unidad"],["ROL-0003","ROL 13600LA-902A1","Rodamientos","Unidad"],["ROL-0004","ROL 18500/20","Rodamientos","Unidad"],["ROL-0005","ROL 206B","Rodamientos","Unidad"],["ROL-0006","ROL 25580","Rodamientos","Unidad"],["ROL-0007","ROL 28622","Rodamientos","Unidad"],["ROL-0008","ROL 28680","Rodamientos","Unidad"],["ROL-0009","ROL 32012 JR","Rodamientos","Unidad"],["ROL-0010","ROL 32307","Rodamientos","Unidad"],["ROL-0011","ROL 33013","Rodamientos","Unidad"],["ROL-0012","ROL 3780/20","Rodamientos","Unidad"],["ROL-0013","ROL 44158","Rodamientos","Unidad"],["ROL-0014","ROL 44643/10","Rodamientos","Unidad"],["ROL-0015","ROL 4T-18590","Rodamientos","Unidad"],["ROL-0016","ROL 4T-30206","Rodamientos","Unidad"],["ROL-0017","ROL 4T-387","Rodamientos","Unidad"],["ROL-0018","ROL 4T-44649","Rodamientos","Unidad"],["ROL-0019","ROL 4T-M84210","Rodamientos","Unidad"],["ROL-0020","ROL 4T-M84249","Rodamientos","Unidad"],["ROL-0021","ROL 501310","Rodamientos","Unidad"],["ROL-0022","ROL 501349/10","Rodamientos","Unidad"],["ROL-0023","ROL 57551","Rodamientos","Unidad"],["ROL-0024","ROL 600 SRS","Rodamientos","Unidad"],["ROL-0025","ROL 6005 NSEC3","Rodamientos","Unidad"],["ROL-0026","ROL 6008-2RSR","Rodamientos","Unidad"],["ROL-0027","ROL 6010-2 RSR","Rodamientos","Unidad"],["ROL-0028","ROL 6203-5/8 2RS","Rodamientos","Unidad"],["ROL-0029","ROL 6204 LLUC3/5K","Rodamientos","Unidad"],["ROL-0030","ROL 6208","Rodamientos","Unidad"],["ROL-0031","ROL 6304-2RS","Rodamientos","Unidad"],["ROL-0032","ROL 6305 A8N-1","Rodamientos","Unidad"],["ROL-0033","ROL 68149/68110","Rodamientos","Unidad"],["ROL-0034","ROL 88649/10","Rodamientos","Unidad"],["ROL-0035","ROL BOWER 31000237","Rodamientos","Unidad"],["ROL-0036","ROL CAPTRO 708-R","Rodamientos","Unidad"],["ROL-0037","ROL DU427C","Rodamientos","Unidad"],["ROL-0038","ROL EMPUJE S/M","Rodamientos","Unidad"],["ROL-0039","ROL FBJ6412","Rodamientos","Unidad"],["ROL-0040","ROL GSFTD1-1/45","Rodamientos","Unidad"],["ROL-0041","ROL HCLM 603049/11","Rodamientos","Unidad"],["ROL-0042","ROL HI-CAP LM 102949","Rodamientos","Unidad"],["ROL-0043","ROL HM803149","Rodamientos","Unidad"],["ROL-0044","ROL JLM 506849E/10E","Rodamientos","Unidad"],["ROL-0045","ROL KOYO 7005G","Rodamientos","Unidad"],["ROL-0046","ROL KOYO 70062","Rodamientos","Unidad"],["ROL-0047","ROL KOYO CAP L17102949","Rodamientos","Unidad"],["ROL-0048","ROL KOYO K1603","Rodamientos","Unidad"],["ROL-0049","ROL MRK 531314-001","Rodamientos","Unidad"],["ROL-0050","ROL NACHI 25520","Rodamientos","Unidad"],["ROL-0051","ROL NACHI E322125","Rodamientos","Unidad"],["ROL-0052","ROL NACHI H-15123/245","Rodamientos","Unidad"],["ROL-0053","ROL NBR GW211PPB9","Rodamientos","Unidad"],["ROL-0054","ROL NTN 4T-18520","Rodamientos","Unidad"],["ROL-0055","ROL NTN 4T-3994/511910","Rodamientos","Unidad"],["ROL-0056","ROL NTN 6002LLUC3/2AS","Rodamientos","Unidad"],["ROL-0057","ROL SET10","Rodamientos","Unidad"],["ROL-0058","ROL T25R-1","Rodamientos","Unidad"],["ROL-0059","ROL T4070","Rodamientos","Unidad"],["ROL-0060","ROL TIMKEN K426898","Rodamientos","Unidad"],["ROL-0061","ROL TOYOTA 32020","Rodamientos","Unidad"],["ROL-0062","ROL UC-206-20","Rodamientos","Unidad"],["ROL-0063","ROL UC207-104D1","Rodamientos","Unidad"],["ELE-0130","ROLLO ESTAÑO DELGADO","Eléctrico","Rollo"],["ELE-0131","ROLLO TERMOENCOGIBLE 19,5/9,5 MM","Eléctrico","Rollo"],["ELE-0132","ROLLO TERMOENCOGIBLE 3,2/1,6 MM","Eléctrico","Rollo"],["ELE-0133","ROLLO TERMOENCOGIBLE 4,8/2,4 MM","Eléctrico","Rollo"],["ELE-0134","ROLLO TERMOENCOGIBLE 6,4/3,2 MM","Eléctrico","Rollo"],["ELE-0135","ROLLO TERMOENCOGIBLE 7,0/3,2 MM","Eléctrico","Rollo"],["ELE-0136","ROLLO TERMOENCOGIBLE 9,5/4,8 MM","Eléctrico","Rollo"],["ELE-0137","ROTOR 24V SA6002","Eléctrico","Unidad"],["HER-0113","SACA FILTROS DE CADENA","Herramientas","Unidad"],["REP-0054","SEALER SELLADOR P/ LOADERS","Repuestos y varios","Unidad"],["ELE-0138","SELENOIDE CARRITO GOLF","Eléctrico","Unidad"],["ELE-0139","SELENOIDE STOP","Eléctrico","Unidad"],["LUB-0060","SELLADOR DE DIRECCION ASISTIDA #9970","Lubricantes y fluidos","Unidad"],["REP-0055","SELLO DE BARRA DHL CAJA 71","Repuestos y varios","Unidad"],["LIM-0050","SHAMPOO P/ CARRO PICHINGA USADO","Limpieza y consumibles","Pichinga"],["TOR-0091","SHEAR BOLT #H005184-1","Tornillería y acoples","Unidad"],["TOR-0092","SHEAR BOLT #H005189-1 CJA FEDEX","Tornillería y acoples","Unidad"],["PIN-0029","SILICON GRIS ALTA TEMPERATURA","Pinturas y adhesivos","Unidad"],["PIN-0030","SILICON NEGRO ALTA TEMPERATURA","Pinturas y adhesivos","Unidad"],["REP-0056","SILIICON ROJO ALTA TEMPERATURA","Repuestos y varios","Unidad"],["ELE-0140","SOGA DESTELLO AMBAR 12/24V","Eléctrico","Unidad"],["HER-0114","SOLDADURA 308 EN 3/32 KG,","Herramientas","Kg"],["HER-0115","SOLDADURA 6013 EN 3/32\" KG","Herramientas","Kg"],["HER-0116","SOLDADURA 7018 H5 KG","Herramientas","Kg"],["HER-0117","SOLDADURA WP7018 H4 KG","Herramientas","Kg"],["ELE-0141","SOLENOIDE 12V (CHANCHITO)","Eléctrico","Unidad"],["ELE-0142","SOLENOIDE 24V (CHANCHITO)","Eléctrico","Unidad"],["ELE-0143","SOLENOIDE BOSCH 24V","Eléctrico","Unidad"],["ELE-0144","SOLENOIDE DELCO REMY 12V","Eléctrico","Unidad"],["ELE-0145","SOLENOIDE NEW ERA 24V","Eléctrico","Unidad"],["LIM-0051","SOLVOKLEAN LIMPIADOR MOTORES ELECTRICOS P/ LOADER","Limpieza y consumibles","Unidad"],["PIN-0031","SPRAY DE SILICONA # 9990","Pinturas y adhesivos","Unidad"],["REP-0057","SWITCH P/ PRESION 40-60 PEARL","Repuestos y varios","Unidad"],["HER-0118","TALADRO ELECTRICO DONGCHENG ESP. 1/4\"","Herramientas","Unidad"],["REP-0058","TANQUE PROPILENO","Repuestos y varios","Unidad"],["LUB-0061","TAPA FUGAS DE RADIADOR #9984","Lubricantes y fluidos","Unidad"],["REP-0059","TAPA RADIADOR","Repuestos y varios","Unidad"],["PIN-0032","TAPE NEGRO 3M","Pinturas y adhesivos","Rollo"],["PIN-0033","TAPE VERDE 3M","Pinturas y adhesivos","Rollo"],["EPP-0021","TAPONES P/ OIDO","EPP","Unidad"],["TOR-0093","TE DE BRONCE DIFERENTES TAMAÑOS 131 AL 137","Tornillería y acoples","Unidad"],["PIN-0034","TEFLON EN CARRUCHA","Pinturas y adhesivos","Rollo"],["ELE-0146","TERMINAL OJO PARA BATERIA","Eléctrico","Unidad"],["HER-0119","TIZA PARA METAL","Herramientas","Unidad"],["ELE-0147","TOMA HEMBRA P/ EXTENSION","Eléctrico","Unidad"],["ELE-0148","TOMA MACHO P/ EXTENSION","Eléctrico","Unidad"],["ELE-0149","TOMA MACHO Y HEMBRA ELECTRICO GASEO","Eléctrico","Unidad"],["PAP-0012","TONER NEGRO CB435","Papelería","Unidad"],["TOR-0094","TORNILLO #H001424","Tornillería y acoples","Unidad"],["HER-0120","TORQUIMETRO / CALIBRADA FORCE 1/2\"","Herramientas","Unidad"],["HER-0121","TORQUIMETRO / CALIBRADA PRATO 1/2\"","Herramientas","Unidad"],["HER-0122","TORQUIMETRO FORCE 3/8\"","Herramientas","Unidad"],["EPP-0022","TRIANGULOS DE SEGURIDAD PAQ. 2","EPP","Paquete"],["TOR-0095","TUBERIA FRENO BLJ312","Tornillería y acoples","Unidad"],["TOR-0096","TUBERIA FRENO BLJ340","Tornillería y acoples","Unidad"],["TOR-0097","TUBERIA FRENO BLJ351","Tornillería y acoples","Unidad"],["TOR-0098","TUBERIA FRENOS BLJ308","Tornillería y acoples","Unidad"],["TOR-0099","TUBO COBRE S/M","Tornillería y acoples","Unidad"],["LUB-0062","TUBO GRASA MULTIUSO II","Lubricantes y fluidos","Unidad"],["TOR-0100","TUBO VIEX DIFERENTES TAMAÑOS","Tornillería y acoples","Unidad"],["TOR-0101","TUERCA 1/4\" E98","Tornillería y acoples","Unidad"],["TOR-0102","TUERCA 1501689","Tornillería y acoples","Unidad"],["TOR-0103","TUERCA DE 1/2\" E39","Tornillería y acoples","Unidad"],["TOR-0104","TUERCA DE 1/2\" E94","Tornillería y acoples","Unidad"],["TOR-0105","TUERCA DE 1/4\" E40","Tornillería y acoples","Unidad"],["TOR-0106","TUERCA DE 3/4\" E41","Tornillería y acoples","Unidad"],["TOR-0107","TUERCA DE 3/8\" E38","Tornillería y acoples","Unidad"],["TOR-0108","TUERCA DE 3/8\" E96","Tornillería y acoples","Unidad"],["TOR-0109","TUERCA DE 5/16\" E95","Tornillería y acoples","Unidad"],["TOR-0110","TUERCA DE 5/8\" E93","Tornillería y acoples","Unidad"],["TOR-0111","TUERCA G-1200-1065","Tornillería y acoples","Unidad"],["TOR-0112","TUERCA PRESION 3/16\"","Tornillería y acoples","Unidad"],["LIM-0052","ULTIMATE BLACK MEGUIARS","Limpieza y consumibles","Unidad"],["TOR-0113","UNIONES O ADAPTADORES DE TUBOS E20","Tornillería y acoples","Unidad"],["TOR-0114","UNIONES VARIAS","Tornillería y acoples","Unidad"],["ELE-0150","VOLTIMETRO # ELA 16136 F28","Eléctrico","Unidad"],["ELE-0151","VOLTIMETRO 12V","Eléctrico","Unidad"],["EPP-0023","ZAPATO DE SEGURIDAD T. 36","EPP","Par"],["EPP-0024","ZAPATO DE SEGURIDAD T. 37","EPP","Par"],["EPP-0025","ZAPATO DE SEGURIDAD T. 38","EPP","Par"],["EPP-0026","ZAPATO DE SEGURIDAD T. 39","EPP","Par"],["EPP-0027","ZAPATO DE SEGURIDAD T. 40","EPP","Par"],["EPP-0028","ZAPATO DE SEGURIDAD T. 41","EPP","Par"],["EPP-0029","ZAPATO DE SEGURIDAD T. 42","EPP","Par"],["EPP-0030","ZAPATO DE SEGURIDAD T. 43","EPP","Par"],["EPP-0031","ZAPATO DE SEGURIDAD T. 44","EPP","Par"],["EPP-0032","ZAPATO DE SEGURIDAD T. 45","EPP","Par"],["EPP-0033","ZAPATO DE SEGURIDAD T. 46","EPP","Par"],["PAP-0013","TINTA EPSON T11A120 NEGRO","Papelería","Unidad"],["PAP-0014","TINTA EPSON T11A220 CYAN","Papelería","Unidad"],["PAP-0015","TINTA EPSON T11A320 MAGENTA","Papelería","Unidad"],["PAP-0016","TINTA EPSON T11A420 AMARILLO","Papelería","Unidad"],["TOR-0115","TE MAA","Tornillería y acoples","Unidad"],["LUB-0063","ALTO AL HUMO DIESEL","Lubricantes y fluidos","Unidad"]];
 
-const CAT_EMOJI = {
-  'EPP':'🦺','Uniformes':'👕','Filtros':'🧪','Fajas':'➰','Rodamientos':'⚙️',
-  'Lubricantes y fluidos':'🛢️','Llantas':'🛞','Eléctrico':'⚡','Calcomanías':'🏷️',
-  'Papelería':'📄','Tornillería y acoples':'🔩','Herramientas':'🔧',
-  'Limpieza y consumibles':'🧴','Pinturas y adhesivos':'🎨','Repuestos y varios':'📦'
-};
+const CAT_EMOJI = {'EPP':'🦺','Uniformes':'👕','Filtros':'🧪','Fajas':'➰','Rodamientos':'⚙️','Lubricantes y fluidos':'🛢️',
+  'Llantas':'🛞','Eléctrico':'⚡','Calcomanías':'🏷️','Papelería':'📄','Tornillería y acoples':'🔩','Herramientas':'🔧',
+  'Limpieza y consumibles':'🧴','Pinturas y adhesivos':'🎨','Repuestos y varios':'📦'};
 const UNIDADES = ['Unidad','Par','Juego','Caja','Paquete','Rollo','Galón','Litro','Cuarto','Cubeta','Estañón','Pichinga','Bidón','Kg','Block','Resma','Metro'];
 const TALLA_ORDEN = ['XS','S','M','L','XL','2XL','XXL','3XL','4XL','UNITALLA'];
+const PAGE = 60;
 
 // ─── ESTADO ──────────────────────────────────────────────────
-let PRODUCTS = [];
-let cart = [];
-let selectedProduct = null;
-let employeeData = null;      // resultado validado del escaneo (incluye scanId)
-let sigHasData = false;
-let qty = 1;
-let activeCat = 'Todas';
-let filtered = [];
-let kbdIndex = -1;
-const MAX_ROWS = 120;
+let PRODUCTS = [], filtered = [], shownCount = PAGE;
+let cart = [], current = null, qty = 1;
+let employeeData = null, sigHasData = false;
+let activeCat = 'Todas', view = '', prevView = 'catalog';
+let online = false;
 
-// ─── UTILIDADES ──────────────────────────────────────────────
 const $ = id => document.getElementById(id);
-function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function norm(s) { return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase(); }
-function gasReady() { return GAS_URL && !GAS_URL.startsWith('PEGAR_AQUI'); }
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const norm = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+const gasReady = () => /^https:\/\/script\.google\.com\/macros\/s\/.+\/exec$/.test(GAS_URL);
+
+// ─── COMUNICACIÓN CON APPS SCRIPT ────────────────────────────
+const CONN_HELP =
+  'No se pudo conectar con el Apps Script. Revisa la implementación:\n' +
+  '• Implementar → Gestionar implementaciones → Aplicación web\n' +
+  '• "Ejecutar como": Yo   ·   "Quién tiene acceso": Cualquier usuario (no "con cuenta de Google")\n' +
+  '• Usa la URL que termina en /exec de esa implementación\n' +
+  '• Prueba la URL en una ventana de incógnito: debe mostrar {"ok":true,…}';
 
 async function gasGet(action) {
-  const url = `${GAS_URL}?action=${encodeURIComponent(action)}&token=${encodeURIComponent(APP_TOKEN)}`;
-  const r = await fetch(url);
-  return r.json();
+  const r = await fetch(`${GAS_URL}?action=${encodeURIComponent(action)}&token=${encodeURIComponent(APP_TOKEN)}`, { redirect: 'follow' });
+  return parseGas(r);
 }
 async function gasPost(payload) {
-  // text/plain evita el preflight CORS que Apps Script no soporta
   const r = await fetch(GAS_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify({ ...payload, token: APP_TOKEN })
+    method: 'POST', redirect: 'follow',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },   // sin preflight CORS
+    body: JSON.stringify({ ...payload, token: APP_TOKEN }),
   });
-  return r.json();
+  return parseGas(r);
 }
-
-function setConn(state, text) {
-  const b = $('connBadge');
-  b.className = 'conn-badge ' + state;
-  $('connText').textContent = text;
+async function parseGas(r) {
+  const t = await r.text();
+  try { return JSON.parse(t); }
+  catch { throw new Error('El servidor respondió con una página en vez de datos (HTTP ' + r.status + '). ' + CONN_HELP); }
 }
+function netError(e) {
+  return (e instanceof TypeError) ? CONN_HELP : (e.message || String(e));
+}
+function setConn(state, title) { $('conn').className = 'conn ' + state; $('conn').title = title; }
+function showConnAlert(msg) { const a = $('connAlert'); a.textContent = msg; a.classList.toggle('on', !!msg); }
 
 // ─── RELOJ ───────────────────────────────────────────────────
-function updateClock() {
-  const now = new Date();
-  const t = now.toLocaleTimeString('es-CR', { hour12: false });
-  $('clock').textContent = t;
-  $('sumTime').textContent = t;
-  $('sumDate').textContent = now.toLocaleDateString('es-CR');
-}
-setInterval(updateClock, 1000);
-updateClock();
+function tick() { $('clock').textContent = new Date().toLocaleTimeString('es-CR', { hour: '2-digit', minute: '2-digit', hour12: false }); }
+setInterval(tick, 10000); tick();
 
-// ─── CARGA DE CATÁLOGO ───────────────────────────────────────
+// ─── NAVEGACIÓN ──────────────────────────────────────────────
+const STEP_OF = { catalog: 1, detail: 1, cart: 2, scan: 3, sign: 4 };
+function go(v) {
+  if (v === view) return renderBar();
+  if (v === 'log') { prevView = view; loadLog(); }
+  if (v === 'scan' && !cart.length) v = 'catalog';
+  if (v === 'sign' && !(cart.length && employeeData)) v = cart.length ? 'scan' : 'catalog';
+  view = v;
+  document.querySelectorAll('.view').forEach(s => s.classList.toggle('on', s.id === 'v-' + v));
+  $('progress').style.display = v === 'log' ? 'none' : 'flex';
+  const step = STEP_OF[v] || 0;
+  document.querySelectorAll('.pstep').forEach(p => {
+    const s = +p.dataset.s;
+    p.className = 'pstep' + (s < step ? ' done' : s === step ? ' active' : '');
+  });
+  if (v === 'cart') renderCart();
+  if (v === 'sign') { renderSummary(); requestAnimationFrame(sizeCanvas); }
+  window.scrollTo({ top: 0 });
+  renderBar();
+}
+function goBack() { go(prevView === 'log' ? 'catalog' : prevView); }
+
+function renderBar() {
+  const b = $('barIn'); let html = '';
+  if (view === 'detail') {
+    html = `<button class="btn btn-primary" onclick="addToCart()">＋ Agregar a la solicitud</button>`;
+  } else if (view === 'cart') {
+    html = `<button class="btn btn-primary" ${cart.length ? '' : 'disabled'} onclick="go('scan')">Continuar · Escanear credencial →</button>`;
+  } else if (view === 'scan') {
+    html = `<button class="btn btn-sec" onclick="go('cart')">←</button>
+            <button class="btn btn-primary" ${employeeData ? '' : 'disabled'} onclick="go('sign')">Continuar · Firma →</button>`;
+  } else if (view === 'sign') {
+    html = `<button class="btn btn-sec" onclick="go('scan')">←</button>
+            <button class="btn btn-primary" id="submitBtn" ${sigHasData ? '' : 'disabled'} onclick="submitOrder()">✅ Confirmar entrega</button>`;
+  } else if (view === 'catalog' && cart.length) {
+    html = `<button class="btn btn-primary" onclick="go('cart')">Ver solicitud (${cart.reduce((a, i) => a + i.cantidad, 0)}) →</button>`;
+  }
+  b.innerHTML = html;
+  $('bar').classList.toggle('on', !!html);
+}
+
+// ─── CATÁLOGO ────────────────────────────────────────────────
 function buildProducts(rows) {
-  // rows: [{codigo, articulo, categoria, unidad, stock}]
   const list = rows.map(r => {
     const name = String(r.articulo).trim();
     const m = name.match(/^(.*?)\s*T\.\s*([A-Z0-9]+)\s*$/i);
-    return {
-      code: String(r.codigo).trim(),
-      name,
-      cat: r.categoria || 'Repuestos y varios',
-      unit: r.unidad || 'Unidad',
-      stock: (r.stock === '' || r.stock === null || r.stock === undefined || isNaN(Number(r.stock))) ? null : Number(r.stock),
-      used: /\bUSAD[OA]S?\b/i.test(name),
-      family: m ? norm(m[1]).trim() : null,
-      talla: m ? m[2].toUpperCase() : null,
-    };
+    const st = (r.stock === '' || r.stock == null || isNaN(Number(r.stock))) ? null : Number(r.stock);
+    return { code: String(r.codigo).trim(), name, cat: r.categoria || 'Repuestos y varios', unit: r.unidad || 'Unidad',
+             stock: st, used: /\bUSAD[OA]S?\b/i.test(name), family: m ? norm(m[1]).trim() : null, talla: m ? m[2].toUpperCase() : null };
   });
   list.forEach(p => p._s = norm(p.code + ' ' + p.name + ' ' + p.cat));
-  list.sort((a, b) => a.name.localeCompare(b.name, 'es'));
-  return list;
+  return list.sort((a, b) => a.name.localeCompare(b.name, 'es'));
 }
 
 async function loadCatalog() {
-  PRODUCTS = buildProducts(CATALOGO_BASE.map(([codigo, articulo, categoria, unidad]) => ({ codigo, articulo, categoria, unidad, stock: null })));
+  PRODUCTS = buildProducts(CATALOGO_BASE.map(([codigo, articulo, categoria, unidad]) => ({ codigo, articulo, categoria, unidad })));
   renderChips(); applyFilter();
-
-  if (!gasReady()) { setConn('off', 'SIN BACKEND'); renderLog([]); return; }
+  if (!gasReady()) { setConn('off', 'Sin URL de Apps Script'); showConnAlert('Falta configurar GAS_URL (URL /exec del Apps Script) en el HTML.'); return; }
   try {
     const res = await gasGet('catalog');
-    if (res.ok && Array.isArray(res.items) && res.items.length) {
+    if (!res.ok) throw new Error(res.error);
+    if (Array.isArray(res.items) && res.items.length) {
       PRODUCTS = buildProducts(res.items.filter(i => i.activo !== false));
       renderChips(); applyFilter();
     }
-    setConn('ok', 'EN LÍNEA');
-    loadLog();
+    online = true; setConn('ok', 'Conectado'); showConnAlert('');
   } catch (e) {
-    setConn('off', 'SIN CONEXIÓN');
-    renderLog([]);
+    setConn('off', 'Sin conexión');
+    showConnAlert('⚠️ Usando catálogo local. ' + netError(e));
   }
 }
 
-// ─── FILTROS Y BÚSQUEDA ──────────────────────────────────────
 function renderChips() {
-  const counts = {};
-  PRODUCTS.forEach(p => counts[p.cat] = (counts[p.cat] || 0) + 1);
+  const counts = {}; PRODUCTS.forEach(p => counts[p.cat] = (counts[p.cat] || 0) + 1);
   const cats = ['Todas', ...Object.keys(counts).sort((a, b) => a.localeCompare(b, 'es'))];
-  $('catChips').innerHTML = cats.map(c =>
-    `<button class="chip ${c === activeCat ? 'active' : ''}" data-cat="${esc(c)}">${CAT_EMOJI[c] || ''} ${esc(c)}<span class="n">${c === 'Todas' ? PRODUCTS.length : counts[c]}</span></button>`
-  ).join('');
-  $('catChips').querySelectorAll('.chip').forEach(b => b.onclick = () => { activeCat = b.dataset.cat; renderChips(); applyFilter(); });
+  $('chips').innerHTML = cats.map(c =>
+    `<button class="chip ${c === activeCat ? 'on' : ''}" data-c="${esc(c)}">${CAT_EMOJI[c] || ''} ${esc(c)}<span class="n">${c === 'Todas' ? PRODUCTS.length : counts[c]}</span></button>`).join('');
+  $('chips').querySelectorAll('.chip').forEach(b => b.onclick = () => { activeCat = b.dataset.c; renderChips(); applyFilter(); });
 }
+
+function terms() { return norm($('prodSearch').value).trim().split(/\s+/).filter(Boolean); }
 
 function applyFilter() {
-  const q = norm($('prodSearch').value).trim();
-  const terms = q.split(/\s+/).filter(Boolean);
-  filtered = PRODUCTS.filter(p =>
-    (activeCat === 'Todas' || p.cat === activeCat) &&
-    terms.every(t => p._s.includes(t))
-  );
-  // Coincidencia exacta de código primero
-  if (terms.length === 1) {
-    filtered.sort((a, b) => (norm(b.code) === terms[0]) - (norm(a.code) === terms[0]) ||
-                            (norm(b.code).startsWith(terms[0])) - (norm(a.code).startsWith(terms[0])));
-  }
-  kbdIndex = -1;
-  renderResults(terms);
+  const t = terms();
+  $('clearSearch').style.display = t.length ? 'block' : 'none';
+  filtered = PRODUCTS.filter(p => (activeCat === 'Todas' || p.cat === activeCat) && t.every(x => p._s.includes(x)));
+  if (t.length === 1) filtered.sort((a, b) => (norm(b.code).startsWith(t[0])) - (norm(a.code).startsWith(t[0])));
+  shownCount = PAGE;
+  renderResults();
 }
 
-function highlight(text, terms) {
+function hl(text, t) {
   let html = esc(text);
-  terms.forEach(t => {
-    if (t.length < 2) return;
-    const src = norm(text);
-    const i = src.indexOf(t);
-    if (i >= 0) {
-      const raw = text.substr(i, t.length);
-      html = html.replace(esc(raw), `<mark>${esc(raw)}</mark>`);
-    }
-  });
+  t.forEach(x => { if (x.length < 2) return; const i = norm(text).indexOf(x); if (i >= 0) { const raw = text.substr(i, x.length); html = html.replace(esc(raw), `<mark>${esc(raw)}</mark>`); } });
   return html;
 }
-
-function stockHtml(p) {
-  if (p.stock === null) return '<span class="r-stock" style="color:var(--text-muted)">—</span>';
-  const cls = p.stock <= 0 ? 'zero' : p.stock <= 3 ? 'low' : 'ok';
-  return `<span class="r-stock ${cls}">Stock ${p.stock}</span>`;
+function stk(p) {
+  if (p.stock === null) return '';
+  return `<span class="stk ${p.stock <= 0 ? 'zero' : p.stock <= 3 ? 'low' : 'ok'}">Stock ${p.stock}</span>`;
 }
 
-function renderResults(terms = []) {
-  const list = $('resultsList');
-  const shown = filtered.slice(0, MAX_ROWS);
-  $('resultsMeta').textContent = filtered.length
-    ? `${filtered.length} resultado${filtered.length !== 1 ? 's' : ''}${filtered.length > MAX_ROWS ? ` · mostrando ${MAX_ROWS}, refina la búsqueda` : ''}`
-    : '';
-  if (!shown.length) { list.innerHTML = '<div class="no-results">Sin resultados. Prueba otro nombre o código.</div>'; return; }
-  list.innerHTML = shown.map((p, i) => `
-    <div class="result-row ${selectedProduct?.code === p.code ? 'selected' : ''} ${i === kbdIndex ? 'kbd' : ''}" data-i="${i}">
-      <span class="r-code">${esc(p.code)}</span>
-      <span class="r-name">${highlight(p.name, terms)}${p.used ? '<span class="tag-used">USADO</span>' : ''}</span>
-      <span class="r-cat">${CAT_EMOJI[p.cat] || ''} ${esc(p.cat)}</span>
-      ${stockHtml(p)}
-    </div>`).join('');
-  list.querySelectorAll('.result-row').forEach(r => r.onclick = () => selectProduct(filtered[+r.dataset.i]));
+function renderResults() {
+  const t = terms(), list = filtered.slice(0, shownCount);
+  $('meta').textContent = `${filtered.length} resultado${filtered.length !== 1 ? 's' : ''}`;
+  if (!list.length) { $('results').innerHTML = '<div class="empty">Sin resultados.<br>Prueba con otra palabra o el código.</div>'; return; }
+  $('results').innerHTML = list.map((p, i) => `
+    <button class="row" data-i="${i}">
+      <span class="em">${CAT_EMOJI[p.cat] || '📦'}</span>
+      <span class="info">
+        <span class="nm" style="display:block">${hl(p.name, t)}</span>
+        <span class="mt"><span class="code">${esc(p.code)}</span><span class="cat">${esc(p.cat)}</span>${stk(p)}${p.used ? '<span class="used">USADO</span>' : ''}</span>
+      </span>
+      <span class="chev">›</span>
+    </button>`).join('') +
+    (filtered.length > shownCount ? `<button class="btn-ghost more" onclick="shownCount+=${PAGE};renderResults()">Mostrar más (${filtered.length - shownCount})</button>` : '');
+  $('results').querySelectorAll('.row').forEach(r => r.onclick = () => openDetail(filtered[+r.dataset.i]));
 }
 
 const searchEl = $('prodSearch');
 searchEl.addEventListener('input', applyFilter);
-searchEl.addEventListener('keydown', e => {
-  const max = Math.min(filtered.length, MAX_ROWS) - 1;
-  if (e.key === 'ArrowDown') { e.preventDefault(); kbdIndex = Math.min(max, kbdIndex + 1); renderResults(norm(searchEl.value).split(/\s+/).filter(Boolean)); scrollKbd(); }
-  else if (e.key === 'ArrowUp') { e.preventDefault(); kbdIndex = Math.max(0, kbdIndex - 1); renderResults(norm(searchEl.value).split(/\s+/).filter(Boolean)); scrollKbd(); }
-  else if (e.key === 'Enter') {
-    e.preventDefault();
-    const p = filtered[kbdIndex >= 0 ? kbdIndex : 0];
-    if (p) selectProduct(p);
-  } else if (e.key === 'Escape') { searchEl.value = ''; applyFilter(); }
-});
-function scrollKbd() { const el = $('resultsList').querySelector('.kbd'); if (el) el.scrollIntoView({ block: 'nearest' }); }
+searchEl.addEventListener('keydown', e => { if (e.key === 'Enter' && filtered[0]) { e.preventDefault(); searchEl.blur(); if (filtered.length === 1) openDetail(filtered[0]); } });
+function clearSearch() { searchEl.value = ''; applyFilter(); searchEl.focus(); }
 
-// ─── SELECCIÓN Y DETALLE ─────────────────────────────────────
+// ─── DETALLE ─────────────────────────────────────────────────
 function familyOf(p) {
   if (!p.family) return [];
-  return PRODUCTS.filter(x => x.family === p.family)
-    .sort((a, b) => {
-      const ia = TALLA_ORDEN.indexOf(a.talla), ib = TALLA_ORDEN.indexOf(b.talla);
-      if (ia >= 0 && ib >= 0) return ia - ib;
-      if (!isNaN(a.talla) && !isNaN(b.talla)) return Number(a.talla) - Number(b.talla);
-      return String(a.talla).localeCompare(String(b.talla));
-    });
+  return PRODUCTS.filter(x => x.family === p.family).sort((a, b) => {
+    const ia = TALLA_ORDEN.indexOf(a.talla), ib = TALLA_ORDEN.indexOf(b.talla);
+    if (ia >= 0 && ib >= 0) return ia - ib;
+    if (!isNaN(a.talla) && !isNaN(b.talla)) return a.talla - b.talla;
+    return String(a.talla).localeCompare(String(b.talla));
+  });
 }
 
-function selectProduct(p) {
-  selectedProduct = p;
-  qty = 1;
-  renderResults(norm(searchEl.value).split(/\s+/).filter(Boolean));
-  showDetail(p);
-  $('selectionDetail').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-
-function showDetail(p) {
-  $('detailEmoji').textContent = CAT_EMOJI[p.cat] || '📦';
-  $('detailCode').textContent = p.code;
-  $('detailTitle').textContent = p.name;
-  $('detailSub').textContent = `Categoría: ${p.cat}` + (p.stock !== null ? `  ·  Disponible: ${p.stock}` : '') + (p.used ? '  ·  Artículo usado' : '');
-
-  const f = $('detailFields');
+function openDetail(p, keep) {
+  current = p;
+  if (!keep) qty = 1;
+  $('dEmoji').textContent = CAT_EMOJI[p.cat] || '📦';
+  $('dCode').textContent = p.code;
+  $('dName').textContent = p.name;
+  $('dSub').textContent = p.cat + (p.stock !== null ? ` · Disponible: ${p.stock}` : '') + (p.used ? ' · Usado' : '');
   const fam = familyOf(p);
-  f.innerHTML = `
-    <div class="field-group">
-      <div class="field-label">Cantidad</div>
-      <div class="qty-control">
-        <button class="qty-btn" onclick="changeQty(-1)">−</button>
-        <input class="qty-display" id="qtyDisplay" value="1" inputmode="numeric"
-               style="background:none;border:none;border-left:1px solid var(--border);border-right:1px solid var(--border);outline:none"
-               oninput="setQty(this.value)">
-        <button class="qty-btn" onclick="changeQty(1)">+</button>
-      </div>
-    </div>
-    <div class="field-group">
-      <div class="field-label">Unidad de medida</div>
-      <select id="fUnidad">${UNIDADES.map(u => `<option ${u === p.unit ? 'selected' : ''}>${u}</option>`).join('')}</select>
-    </div>
-    ${fam.length > 1 ? `
-    <div class="field-group">
-      <div class="field-label">Talla</div>
-      <select id="fTalla" onchange="switchVariant(this.value)">
-        ${fam.map(x => `<option value="${esc(x.code)}" ${x.code === p.code ? 'selected' : ''}>${esc(x.talla)}${x.stock !== null ? ` (stock ${x.stock})` : ''}</option>`).join('')}
-      </select>
-    </div>` : ''}
-    <div class="field-group">
-      <div class="field-label">Equipo / destino</div>
-      <input type="text" id="fDestino" placeholder="Ej: Loader L19, Móvil 6, Rampa">
-    </div>
-    <div class="field-group" style="flex-basis:100%">
-      <div class="field-label">Observación</div>
-      <textarea id="fObs" rows="1" placeholder="Opcional: modelo, serie, motivo…"></textarea>
-    </div>`;
-  $('selectionDetail').classList.add('visible');
+  const prev = keep ? { u: $('fUnidad')?.value, d: $('fDestino')?.value, o: $('fObs')?.value } : {};
+  $('dFields').innerHTML = `
+    ${fam.length > 1 ? `<div class="field full"><div class="lbl">Talla</div><div class="tallas">
+      ${fam.map(x => `<button class="talla ${x.code === p.code ? 'on' : ''}" onclick="switchVariant('${esc(x.code)}')">${esc(x.talla)}${x.stock !== null ? `<small>${x.stock}</small>` : ''}</button>`).join('')}
+    </div></div>` : ''}
+    <div class="field"><div class="lbl">Cantidad</div>
+      <div class="qty"><button onclick="changeQty(-1)">−</button>
+        <input id="qtyIn" type="number" inputmode="numeric" min="1" value="${qty}" oninput="qty=Math.max(1,parseInt(this.value)||1)">
+        <button onclick="changeQty(1)">＋</button></div></div>
+    <div class="field"><div class="lbl">Unidad de medida</div>
+      <select id="fUnidad">${UNIDADES.map(u => `<option ${u === (prev.u || p.unit) ? 'selected' : ''}>${u}</option>`).join('')}</select></div>
+    <div class="field full"><div class="lbl">Equipo / destino (opcional)</div>
+      <input id="fDestino" type="text" placeholder="Ej: Loader L19, Móvil 6, Rampa" value="${esc(prev.d || '')}"></div>
+    <div class="field full"><div class="lbl">Observación (opcional)</div>
+      <textarea id="fObs" rows="2" placeholder="Modelo, serie, motivo…">${esc(prev.o || '')}</textarea></div>`;
+  go('detail');
 }
+function switchVariant(code) { const p = PRODUCTS.find(x => x.code === code); if (p) openDetail(p, true); }
+function changeQty(d) { qty = Math.max(1, Math.min(9999, qty + d)); $('qtyIn').value = qty; }
 
-function switchVariant(code) {
-  const p = PRODUCTS.find(x => x.code === code);
-  if (p) { const keepQty = qty; selectedProduct = p; showDetail(p); setQty(keepQty); renderResults(norm(searchEl.value).split(/\s+/).filter(Boolean)); }
-}
-
-function setQty(v) {
-  const n = Math.max(1, Math.min(9999, parseInt(v, 10) || 1));
-  qty = n;
-  const el = $('qtyDisplay');
-  if (el && String(el.value) !== String(n) && document.activeElement !== el) el.value = n;
-}
-function changeQty(d) { setQty(qty + d); $('qtyDisplay').value = qty; }
-
-// ─── SOLICITUD (CARRITO) ─────────────────────────────────────
+// ─── SOLICITUD ───────────────────────────────────────────────
 function addToCart() {
-  const p = selectedProduct;
-  if (!p) return;
-  setQty($('qtyDisplay').value);
-  if (p.stock !== null && qty > p.stock &&
-      !confirm(`La cantidad (${qty}) supera el stock registrado (${p.stock}). ¿Agregar de todos modos?`)) return;
-
-  const item = {
-    key: p.code + '_' + Date.now(),
-    codigo: p.code,
-    articulo: p.name,
-    categoria: p.cat,
-    cantidad: qty,
-    unidad: $('fUnidad').value,
-    talla: p.talla || '',
-    destino: $('fDestino').value.trim(),
-    observacion: $('fObs').value.trim(),
-  };
-  cart.push(item);
-  renderCart(); updateSummary(); updateSteps();
-
-  selectedProduct = null; qty = 1;
-  $('selectionDetail').classList.remove('visible');
-  searchEl.value = ''; applyFilter(); searchEl.focus();
+  const p = current; if (!p) return;
+  qty = Math.max(1, parseInt($('qtyIn').value) || 1);
+  if (p.stock !== null && qty > p.stock && !confirm(`La cantidad (${qty}) supera el stock registrado (${p.stock}). ¿Agregar de todos modos?`)) return;
+  cart.push({ key: p.code + '_' + Date.now(), codigo: p.code, articulo: p.name, categoria: p.cat, cantidad: qty,
+              unidad: $('fUnidad').value, talla: p.talla || '', destino: $('fDestino').value.trim(), observacion: $('fObs').value.trim() });
+  current = null;
+  searchEl.value = ''; applyFilter();
+  updateCount();
+  go('cart');
 }
-
 function removeFromCart(key) {
   cart = cart.filter(i => i.key !== key);
-  renderCart(); updateSummary(); updateSteps();
+  updateCount(); renderCart(); renderBar();
+  if (!cart.length) { resetScan(); clearSig(); }
 }
-
+function updateCount() {
+  const n = cart.reduce((a, i) => a + i.cantidad, 0);
+  $('cartCount').textContent = n; $('cartCount').classList.toggle('on', n > 0);
+}
 function renderCart() {
-  const wrap = $('cartItems');
-  $('cartEmpty').style.display = cart.length ? 'none' : 'block';
-  wrap.innerHTML = cart.map(i => {
-    const meta = [i.codigo, i.unidad, i.talla && `Talla ${i.talla}`, i.destino && `Destino: ${i.destino}`, i.observacion].filter(Boolean).map(esc).join(' · ');
-    return `
-    <div class="cart-item">
-      <div class="cart-item-emoji">${CAT_EMOJI[i.categoria] || '📦'}</div>
-      <div class="cart-item-info">
-        <div class="cart-item-name">${esc(i.articulo)} <span style="color:var(--amber);font-family:var(--mono);font-size:11px">×${i.cantidad}</span></div>
-        <div class="cart-item-meta">${meta}</div>
-      </div>
-      <button class="cart-remove" onclick="removeFromCart('${esc(i.key)}')">✕</button>
-    </div>`;
+  const n = cart.reduce((a, i) => a + i.cantidad, 0);
+  $('cartSub').textContent = cart.length ? `${cart.length} línea${cart.length > 1 ? 's' : ''} · ${n} ítem${n > 1 ? 's' : ''}. Puedes agregar más antes de continuar.` : 'La solicitud está vacía.';
+  $('cartItems').innerHTML = cart.map(i => {
+    const meta = [i.codigo, i.unidad, i.talla && 'Talla ' + i.talla, i.destino && 'Destino: ' + i.destino, i.observacion].filter(Boolean).map(esc).join(' · ');
+    return `<div class="cart-item"><span class="em">${CAT_EMOJI[i.categoria] || '📦'}</span>
+      <div class="info"><div class="nm">${esc(i.articulo)}<span class="x">×${i.cantidad}</span></div><div class="mt">${meta}</div></div>
+      <button class="del" onclick="removeFromCart('${esc(i.key)}')">✕</button></div>`;
   }).join('');
 }
 
-function updateSummary() {
-  const total = cart.reduce((a, i) => a + i.cantidad, 0);
-  $('sumItems').textContent = `${total} ítem${total !== 1 ? 's' : ''}`;
-}
-
-function updateSteps() {
-  const s1 = $('step1'), s2 = $('step2'), s3 = $('step3');
-  s1.className = cart.length ? 'step done' : 'step active';
-  s2.className = employeeData ? 'step done' : (cart.length ? 'step active' : 'step');
-  s3.className = sigHasData ? 'step done' : (employeeData && cart.length ? 'step active' : 'step');
-  checkSubmit();
-}
-
 // ─── CÁMARA ──────────────────────────────────────────────────
-let cameraStream = null;
-
-async function openCameraModal() {
-  if (!gasReady()) { showScanAlert('error', '⚠️ Falta configurar GAS_URL en el HTML.'); return; }
-  $('cameraModal').classList.add('show');
-  $('camStateIdle').style.display = 'block';
-  $('camStateAnalyzing').style.display = 'none';
+let stream = null;
+async function openCamera() {
+  if (!gasReady()) { showAlert('error', 'Falta configurar GAS_URL en el HTML.'); return; }
+  $('camModal').classList.add('on');
+  $('camIdle').style.display = 'flex'; $('camBusy').style.display = 'none';
   $('fileUpload').value = '';
   try {
-    cameraStream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1440 } }
-    });
-    $('camVideo').srcObject = cameraStream;
-  } catch (e) {
-    document.querySelector('.cam-preview-wrap').style.display = 'none';
-    $('captureBtn').style.display = 'none';
+    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1440 } } });
+    $('camVideo').srcObject = stream;
+    $('camView').style.display = ''; $('shutter').style.display = ''; $('camNo').style.display = 'none';
+  } catch {
+    $('camView').style.display = 'none'; $('shutter').style.display = 'none'; $('camNo').style.display = 'flex';
   }
 }
+function stopCamera() { if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; } }
+function closeCamera() { stopCamera(); $('camModal').classList.remove('on'); }
 
-function closeCameraModal() {
-  $('cameraModal').classList.remove('show');
-  stopCamera();
-  $('camStateIdle').style.display = 'block';
-  $('camStateAnalyzing').style.display = 'none';
-  document.querySelector('.cam-preview-wrap').style.display = '';
-  $('captureBtn').style.display = '';
-}
-
-function stopCamera() {
-  if (cameraStream) { cameraStream.getTracks().forEach(t => t.stop()); cameraStream = null; }
-}
-
-// Reduce la imagen a JPEG ≤1600px para no exceder límites de Apps Script / API
-function toJpegDataUrl(src, maxDim = 1600, quality = 0.88) {
-  return new Promise((resolve, reject) => {
+function toJpeg(src, maxDim = 1600, q = 0.88) {
+  return new Promise((res, rej) => {
     const img = new Image();
     img.onload = () => {
       const s = Math.min(1, maxDim / Math.max(img.width, img.height));
       const c = document.createElement('canvas');
-      c.width = Math.round(img.width * s);
-      c.height = Math.round(img.height * s);
+      c.width = Math.round(img.width * s); c.height = Math.round(img.height * s);
       c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
-      resolve(c.toDataURL('image/jpeg', quality));
+      res(c.toDataURL('image/jpeg', q));
     };
-    img.onerror = reject;
-    img.src = src;
+    img.onerror = rej; img.src = src;
   });
 }
-
 async function capturePhoto() {
-  const video = $('camVideo'), canvas = $('camCanvas');
-  canvas.width = video.videoWidth || 1280;
-  canvas.height = video.videoHeight || 960;
-  canvas.getContext('2d').drawImage(video, 0, 0);
+  const v = $('camVideo'), c = document.createElement('canvas');
+  c.width = v.videoWidth || 1280; c.height = v.videoHeight || 960;
+  c.getContext('2d').drawImage(v, 0, 0);
   stopCamera();
-  const dataUrl = await toJpegDataUrl(canvas.toDataURL('image/jpeg', 0.95));
-  analyzeCredential(dataUrl);
+  analyze(await toJpeg(c.toDataURL('image/jpeg', .95)));
+}
+function handleFile(input) {
+  const f = input.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = async e => { try { analyze(await toJpeg(e.target.result)); } catch { closeCamera(); showAlert('error', 'No se pudo leer la imagen.'); } };
+  r.readAsDataURL(f);
 }
 
-function handleFileUpload(input) {
-  const file = input.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = async e => {
-    try { analyzeCredential(await toJpegDataUrl(e.target.result)); }
-    catch { closeCameraModal(); showScanAlert('error', '⚠️ No se pudo leer la imagen seleccionada.'); }
-  };
-  reader.readAsDataURL(file);
-}
-
-// ─── ANÁLISIS VÍA APPS SCRIPT + CLAUDE ───────────────────────
-async function analyzeCredential(dataUrl) {
+async function analyze(dataUrl) {
   stopCamera();
-  $('camStateIdle').style.display = 'none';
-  $('camStateAnalyzing').style.display = 'block';
+  $('camIdle').style.display = 'none'; $('camBusy').style.display = 'flex';
   $('capturedPreview').src = dataUrl;
-
-  const steps = ['as1', 'as2', 'as3', 'as4'];
-  const txt = [
-    ['⏳ Subiendo foto a Drive…', '✅ Foto guardada'],
-    ['⏳ Extrayendo datos del carné…', '✅ Datos extraídos'],
-    ['⏳ Verificando empresa autorizada…', '✅ Empresa revisada'],
-    ['⏳ Validando fecha de expiración…', '✅ Fecha revisada'],
-  ];
-  steps.forEach((s, i) => { $(s).textContent = '— ' + txt[i][0].slice(2); $(s).className = 'astep'; });
+  const ids = ['as1', 'as2', 'as3', 'as4'];
+  const txt = [['Subiendo foto a Drive…', 'Foto guardada'], ['Extrayendo datos…', 'Datos extraídos'],
+               ['Verificando empresa…', 'Empresa revisada'], ['Validando expiración…', 'Fecha revisada']];
+  ids.forEach((id, i) => { $(id).textContent = '— ' + txt[i][0]; $(id).className = 'astep'; });
   let k = 0;
-  const timer = setInterval(() => {
-    if (k > 0) { $(steps[k - 1]).textContent = txt[k - 1][1]; $(steps[k - 1]).className = 'astep done'; }
-    if (k < steps.length) { $(steps[k]).textContent = txt[k][0]; $(steps[k]).className = 'astep active'; k++; }
+  const tm = setInterval(() => {
+    if (k > 0) { $(ids[k - 1]).textContent = '✅ ' + txt[k - 1][1]; $(ids[k - 1]).className = 'astep done'; }
+    if (k < ids.length) { $(ids[k]).textContent = '⏳ ' + txt[k][0]; $(ids[k]).className = 'astep active'; k++; }
   }, 900);
-
   try {
-    const res = await gasPost({
-      action: 'scanCredential',
-      mediaType: 'image/jpeg',
-      image: dataUrl.split(',')[1],
-    });
-    clearInterval(timer);
-    if (!res.ok) throw new Error(res.error || 'Error desconocido en el servidor');
-    steps.forEach((s, i) => { $(s).textContent = txt[i][1]; $(s).className = 'astep done'; });
-    await new Promise(r => setTimeout(r, 350));
-    closeCameraModal();
-    processCredentialResult(res);
-  } catch (err) {
-    clearInterval(timer);
-    closeCameraModal();
-    showScanAlert('error', '⚠️ Error al analizar: ' + (err.message || 'Verifica la conexión e intenta de nuevo.'));
+    const res = await gasPost({ action: 'scanCredential', mediaType: 'image/jpeg', image: dataUrl.split(',')[1] });
+    clearInterval(tm);
+    if (!res.ok) throw new Error(res.error || 'Error en el servidor');
+    closeCamera();
+    showScanResult(res);
+  } catch (e) {
+    clearInterval(tm); closeCamera();
+    showAlert('error', '⚠️ Error al analizar: ' + netError(e));
   }
 }
 
-// ─── RESULTADO DEL ESCANEO (validado en el servidor) ─────────
-function processCredentialResult(res) {
-  const d = res.data || {};
-  const chk = res.checks || {};
+function showScanResult(res) {
+  const d = res.data || {}, c = res.checks || {};
+  $('vfields').innerHTML = [
+    ['👤', 'Nombre', d.nombre, c.nombre], ['🪪', 'Cédula', d.cedula, c.cedula], ['🏢', 'Empresa', d.empresa, c.empresa],
+    ['📅', 'Expira', (d.expiracionTexto || '') + (d.expiracionISO ? ` (${d.expiracionISO})` : ''), c.expiracion],
+    ['#️⃣', 'ID Emp.', d.idEmpleado, c.idEmpleado],
+  ].map(([ic, k, v, ok]) => `<div class="vf ${ok ? 'ok' : 'warn'}"><span>${ic}</span><span class="k">${k}</span><span class="v">${esc(v || '—')}</span><span>${ok ? '✅' : '❌'}</span></div>`).join('');
+
   const area = $('scanArea');
-
-  const fields = [
-    { icon: '👤', key: 'Nombre',   val: d.nombre,           ok: chk.nombre },
-    { icon: '🪪', key: 'Cédula',   val: d.cedula,           ok: chk.cedula },
-    { icon: '🏢', key: 'Empresa',  val: d.empresa,          ok: chk.empresa },
-    { icon: '📅', key: 'Exp.',     val: d.expiracionTexto + (d.expiracionISO ? ` (${d.expiracionISO})` : ''), ok: chk.expiracion },
-    { icon: '#️⃣', key: 'ID Emp.',  val: d.idEmpleado,       ok: chk.idEmpleado },
-  ];
-  $('validationFields').innerHTML = fields.map(f => `
-    <div class="vfield ${f.ok ? 'ok' : 'warn'}">
-      <span class="vfield-icon">${f.icon}</span>
-      <span class="vfield-key">${f.key}</span>
-      <span class="vfield-val">${esc(f.val || '—')}</span>
-      <span class="vfield-status">${f.ok ? '✅' : '❌'}</span>
-    </div>`).join('');
-
   if (!res.valid) {
     employeeData = null;
-    area.classList.remove('scanned');
-    area.querySelector('.scan-icon').textContent = '🚫';
-    area.querySelector('.scan-text').innerHTML = `<strong style="color:var(--red)">Credencial RECHAZADA</strong>Toca para volver a escanear`;
-    area.onclick = resetScan;
-    area.style.borderColor = 'var(--red)';
-    area.style.background = 'var(--red-dim)';
-    $('employeeResult').classList.remove('visible');
-    $('sumEmployee').textContent = 'Rechazado';
-    showScanAlert('error', '🚨 ' + (res.alerts || []).join(' | '));
-    updateSteps();
-    return;
+    area.className = 'scan-area bad'; $('scanIc').textContent = '🚫';
+    $('scanTitle').textContent = 'Credencial RECHAZADA'; $('scanSub').textContent = 'Toca para volver a escanear';
+    $('emp').classList.remove('on');
+    showAlert('error', '🚨 ' + (res.alerts || []).join('\n'));
+  } else {
+    employeeData = { scanId: res.scanId, nombre: d.nombre, cedula: d.cedula, empresa: d.empresa, expiracion: d.expiracionISO || d.expiracionTexto, idEmpleado: d.idEmpleado };
+    area.className = 'scan-area ok'; $('scanIc').textContent = '✅';
+    $('scanTitle').textContent = 'Credencial verificada'; $('scanSub').textContent = 'Toca para volver a escanear';
+    $('emp').classList.add('on');
+    $('empAv').textContent = d.nombre.split(/\s+/).map(n => n[0]).join('').slice(0, 2).toUpperCase();
+    $('empName').textContent = d.nombre;
+    $('empId').textContent = `Céd. ${d.cedula} · ID ${d.idEmpleado}`;
+    $('empRole').textContent = `${d.empresa} · Exp: ${d.expiracionTexto}`;
+    const w = (res.warnings || []).join('\n');
+    showAlert(w ? 'warning' : 'ok', '✅ Credencial válida.' + (w ? '\n⚠️ ' + w : ''));
   }
-
-  employeeData = {
-    scanId: res.scanId,
-    nombre: d.nombre, cedula: d.cedula, empresa: d.empresa,
-    expiracion: d.expiracionISO || d.expiracionTexto, idEmpleado: d.idEmpleado,
-    fotoUrl: res.fotoUrl,
-  };
-  area.classList.add('scanned');
-  area.querySelector('.scan-icon').textContent = '✅';
-  area.querySelector('.scan-text').innerHTML = `<strong>Credencial verificada</strong>Toca para volver a escanear`;
-  area.onclick = resetScan;
-  area.style.borderColor = ''; area.style.background = '';
-
-  $('employeeResult').classList.add('visible');
-  $('empAvatar').textContent = d.nombre.split(/\s+/).map(n => n[0]).join('').slice(0, 2).toUpperCase();
-  $('empName').textContent = d.nombre;
-  $('empId').textContent = `Céd. ${d.cedula}  ·  ID ${d.idEmpleado}`;
-  $('empRole').textContent = `${d.empresa}  ·  Exp: ${d.expiracionTexto}`;
-  $('sumEmployee').textContent = d.nombre;
-
-  const warn = (res.warnings || []).length ? ' ⚠️ ' + res.warnings.join(' | ') : '';
-  showScanAlert(warn ? 'warning' : 'ok', '✅ Credencial válida. Empresa y vigencia confirmadas.' + warn);
-  updateSteps();
+  renderBar();
 }
-
-function showScanAlert(type, msg) {
-  const el = $('scanAlert');
-  el.className = 'scan-alert alert-' + type;
-  el.textContent = msg;
-  el.style.display = 'flex';
-}
-
+function showAlert(type, msg) { const a = $('scanAlert'); a.className = 'alert on ' + type; a.textContent = msg; }
 function resetScan() {
   employeeData = null;
-  const area = $('scanArea');
-  area.classList.remove('scanned');
-  area.style.borderColor = ''; area.style.background = '';
-  area.querySelector('.scan-icon').textContent = '🪪';
-  area.querySelector('.scan-text').innerHTML = `<strong>Toca para escanear con cámara</strong>Claude Vision validará la credencial`;
-  area.onclick = openCameraModal;
-  $('employeeResult').classList.remove('visible');
-  $('validationFields').innerHTML = '';
-  $('scanAlert').style.display = 'none';
-  $('sumEmployee').textContent = 'Sin escanear';
-  updateSteps();
+  $('scanArea').className = 'scan-area'; $('scanIc').textContent = '🪪';
+  $('scanTitle').textContent = 'Toca para escanear'; $('scanSub').textContent = 'Claude Vision validará la credencial';
+  $('emp').classList.remove('on'); $('vfields').innerHTML = ''; $('scanAlert').className = 'alert';
 }
 
 // ─── FIRMA ───────────────────────────────────────────────────
-const canvas = $('sigCanvas');
-const ctx = canvas.getContext('2d');
-let drawing = false, lastX = 0, lastY = 0;
-ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2.5; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-
-function getPos(e) {
-  const r = canvas.getBoundingClientRect();
-  const sx = canvas.width / r.width, sy = canvas.height / r.height;
-  const pt = e.touches ? e.touches[0] : e;
-  return { x: (pt.clientX - r.left) * sx, y: (pt.clientY - r.top) * sy };
+const canvas = $('sigCanvas'), ctx = canvas.getContext('2d');
+let drawing = false, last = null;
+function sizeCanvas() {
+  const r = canvas.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+  if (!r.width) return;
+  const w = Math.round(r.width * dpr), h = Math.round(r.height * dpr);
+  if (canvas.width === w && canvas.height === h) return;
+  const old = sigHasData ? canvas.toDataURL() : null;
+  canvas.width = w; canvas.height = h;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2.6; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  if (old) { const im = new Image(); im.onload = () => ctx.drawImage(im, 0, 0, r.width, r.height); im.src = old; }
 }
-function startDraw(e) { if (e.cancelable) e.preventDefault(); drawing = true; const p = getPos(e); lastX = p.x; lastY = p.y; }
-function moveDraw(e) {
+window.addEventListener('resize', () => { if (view === 'sign') sizeCanvas(); });
+function pos(e) { const r = canvas.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
+canvas.addEventListener('pointerdown', e => { e.preventDefault(); canvas.setPointerCapture(e.pointerId); drawing = true; last = pos(e); });
+canvas.addEventListener('pointermove', e => {
   if (!drawing) return;
-  if (e.cancelable) e.preventDefault();
-  const p = getPos(e);
-  ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(p.x, p.y); ctx.stroke();
-  lastX = p.x; lastY = p.y;
-  if (!sigHasData) {
-    sigHasData = true;
-    $('sumSig').textContent = 'Firmado ✓'; $('sumSig').style.color = 'var(--green)';
-    updateSteps();
-  }
-}
-function endDraw() { drawing = false; }
-canvas.addEventListener('mousedown', startDraw);
-canvas.addEventListener('mousemove', moveDraw);
-canvas.addEventListener('mouseup', endDraw);
-canvas.addEventListener('mouseleave', endDraw);
-canvas.addEventListener('touchstart', startDraw, { passive: false });
-canvas.addEventListener('touchmove', moveDraw, { passive: false });
-canvas.addEventListener('touchend', endDraw);
-
+  const p = pos(e);
+  ctx.beginPath(); ctx.moveTo(last.x, last.y); ctx.lineTo(p.x, p.y); ctx.stroke(); last = p;
+  if (!sigHasData) { sigHasData = true; $('sigHint').style.display = 'none'; renderBar(); }
+});
+['pointerup', 'pointercancel', 'pointerleave'].forEach(ev => canvas.addEventListener(ev, () => drawing = false));
 function clearSig() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  sigHasData = false;
-  $('sumSig').textContent = 'Pendiente'; $('sumSig').style.color = '';
-  updateSteps();
+  ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.restore();
+  sigHasData = false; $('sigHint').style.display = ''; renderBar();
 }
-
-// Firma en negro sobre blanco para el archivo guardado en Drive
 function signaturePng() {
-  const c = document.createElement('canvas');
-  c.width = canvas.width; c.height = canvas.height;
-  const x = c.getContext('2d');
-  x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height);
-  x.filter = 'brightness(0)';
-  x.drawImage(canvas, 0, 0);
+  const c = document.createElement('canvas'); c.width = canvas.width; c.height = canvas.height;
+  const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height);
+  x.filter = 'brightness(0)'; x.drawImage(canvas, 0, 0);
   return c.toDataURL('image/png');
+}
+function renderSummary() {
+  const n = cart.reduce((a, i) => a + i.cantidad, 0), now = new Date();
+  $('summary').innerHTML = `
+    <div class="r"><span>Empleado</span><span style="color:var(--amber)">${esc(employeeData?.nombre)}</span></div>
+    <div class="r"><span>Cédula · ID</span><span>${esc(employeeData?.cedula)} · ${esc(employeeData?.idEmpleado)}</span></div>
+    <div class="r"><span>Empresa</span><span>${esc(employeeData?.empresa)}</span></div>
+    <div class="r"><span>Fecha</span><span>${now.toLocaleDateString('es-CR')} ${now.toLocaleTimeString('es-CR', { hour: '2-digit', minute: '2-digit', hour12: false })}</span></div>
+    <div class="r"><span>Artículos (${n})</span><span>${cart.map(i => esc(i.articulo) + ' ×' + i.cantidad).join('<br>')}</span></div>`;
 }
 
 // ─── ENVÍO ───────────────────────────────────────────────────
-function checkSubmit() {
-  $('submitBtn').classList.toggle('ready', !!(cart.length && employeeData && sigHasData));
-}
-
 async function submitOrder() {
   if (!cart.length || !employeeData || !sigHasData) return;
-  const btn = $('submitBtn');
-  btn.classList.add('loading');
-  btn.textContent = '⏳ Registrando…';
+  const btn = $('submitBtn'); btn.disabled = true; btn.textContent = '⏳ Registrando…';
   try {
-    const res = await gasPost({
-      action: 'registrarEntrega',
-      scanId: employeeData.scanId,
-      items: cart.map(({ key, ...rest }) => rest),
-      firma: signaturePng().split(',')[1],
-      dispositivo: navigator.userAgent.slice(0, 120),
-    });
+    const res = await gasPost({ action: 'registrarEntrega', scanId: employeeData.scanId,
+      items: cart.map(({ key, ...r }) => r), firma: signaturePng().split(',')[1], dispositivo: navigator.userAgent.slice(0, 120) });
     if (!res.ok) throw new Error(res.error || 'No se pudo registrar la entrega');
-
-    const total = cart.reduce((a, i) => a + i.cantidad, 0);
-    $('modalSub').textContent = `Entrega registrada para ${employeeData.nombre} — ${total} ítem${total !== 1 ? 's' : ''}.` +
-      ((res.stockAlerts || []).length ? `\n⚠️ Stock: ${res.stockAlerts.join(', ')}` : '');
-    $('modalOrderId').textContent = `Orden: ${res.orderId}  ·  ${res.fecha}  ${res.hora}`;
-    $('modalOverlay').classList.add('show');
-    loadLog();
-    if (res.stockUpdates) {
-      res.stockUpdates.forEach(u => { const p = PRODUCTS.find(x => x.code === u.codigo); if (p) p.stock = u.stock; });
-    }
+    (res.stockUpdates || []).forEach(u => { const p = PRODUCTS.find(x => x.code === u.codigo); if (p) p.stock = u.stock; });
+    const n = cart.reduce((a, i) => a + i.cantidad, 0);
+    $('okText').textContent = `Entrega registrada para ${employeeData.nombre} — ${n} ítem${n !== 1 ? 's' : ''}.` +
+      ((res.stockAlerts || []).length ? '\n⚠️ Stock: ' + res.stockAlerts.join(', ') : '');
+    $('okId').textContent = `${res.orderId} · ${res.fecha} ${res.hora}`;
+    $('okModal').classList.add('on');
   } catch (e) {
-    alert('⚠️ ' + e.message);
-  } finally {
-    btn.classList.remove('loading');
-    btn.textContent = '✅ Confirmar entrega';
+    alert('⚠️ ' + netError(e));
+    btn.disabled = false; btn.textContent = '✅ Confirmar entrega';
   }
 }
-
-function closeModal() {
-  $('modalOverlay').classList.remove('show');
-  cart = []; renderCart(); updateSummary();
-  resetScan(); clearSig();
-  selectedProduct = null; qty = 1;
-  $('selectionDetail').classList.remove('visible');
-  applyFilter();
-  updateSteps();
+function newRequest() {
+  $('okModal').classList.remove('on');
+  cart = []; updateCount(); resetScan(); clearSig(); applyFilter();
+  go('catalog');
 }
 
 // ─── REGISTRO DEL DÍA ────────────────────────────────────────
 async function loadLog() {
-  if (!gasReady()) return;
+  $('logSub').textContent = 'Cargando…'; $('logList').innerHTML = '';
+  if (!gasReady()) { $('logSub').textContent = 'Sin conexión al servidor.'; return; }
   try {
     const res = await gasGet('entregasHoy');
-    if (res.ok) renderLog(res.entregas || []);
-  } catch { /* sin conexión: se mantiene la tabla */ }
-}
-
-function renderLog(rows) {
-  const tb = $('logBody');
-  if (!rows.length) { tb.innerHTML = '<tr><td colspan="8" class="log-empty">Sin entregas registradas hoy</td></tr>'; return; }
-  tb.innerHTML = rows.map(r => `
-    <tr>
-      <td><span style="font-family:var(--mono);color:var(--amber)">${esc(r.orden)}</span></td>
-      <td style="font-family:var(--mono)">${esc(r.hora)}</td>
-      <td>${esc(r.nombre)}</td>
-      <td style="font-family:var(--mono);color:var(--text-muted)">${esc(r.cedula)}</td>
-      <td style="font-family:var(--mono);color:var(--text-muted)">${esc(r.idEmpleado)}</td>
-      <td>${esc(r.articulos)}</td>
-      <td>${esc(r.empresa)}</td>
-      <td><span class="badge badge-ok">ENTREGADO</span></td>
-    </tr>`).join('');
+    if (!res.ok) throw new Error(res.error);
+    const rows = res.entregas || [];
+    $('logSub').textContent = rows.length ? `${rows.length} entrega${rows.length > 1 ? 's' : ''} registradas` : 'Sin entregas registradas hoy';
+    $('logList').innerHTML = rows.map(r => `
+      <div class="log-card"><div class="top"><span class="ord">${esc(r.orden)}</span><span class="hr">${esc(r.hora)}</span></div>
+        <div class="who">${esc(r.nombre)}</div>
+        <div class="ids">Céd. ${esc(r.cedula)} · ID ${esc(r.idEmpleado)} · ${esc(r.empresa)}</div>
+        <div class="items">${esc(r.articulos)}</div></div>`).join('');
+  } catch (e) { $('logSub').textContent = '⚠️ ' + netError(e); }
 }
 
 // ─── INICIO ──────────────────────────────────────────────────
+go('catalog');
 loadCatalog();
 </script>
 </body>
